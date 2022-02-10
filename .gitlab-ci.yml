@@ -1,0 +1,17 @@
+include:
+  - template: Auto-DevOps.gitlab-ci.yml
+
+image: node:current-alpine
+
+pages:
+  stage: staging
+  script:
+    - cd website
+    - npm install
+    - npm build
+  artifacts:
+      paths:
+        - public
+  only:
+    - master
+
