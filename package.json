@@ -2,9 +2,9 @@
   "name": "avocado",
   "version": "1.0.0",
   "description": "A social media app for my Capstone Project.",
-  "main": "index.js",
   "scripts": {
-    "dev": "concurrently -n api \"pnpm run dev --filter @avocado/api\""
+    "dev": "concurrently -n api,website -c cyan,magenta \"pnpm run dev --filter @avocado/api\" \"pnpm run dev --filter @avocado/website\"",
+    "clean": "rm -rf node-modules/ && rm -rf api/node-modules/ && rm pnpm-lock.yaml"
   },
   "repository": {
     "type": "git",

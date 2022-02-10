@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "node build/index.js",
-    "dev": "concurrently \"tsc -w --preserveWatchOutput\" \"nodemon build/server.js\""
+    "dev": "concurrently --raw \"tsc -w --preserveWatchOutput\" \"nodemon build/server.js\""
   },
   "private": true,
   "devDependencies": {
