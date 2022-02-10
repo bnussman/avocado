@@ -1,14 +1,19 @@
-# Social
+# 👀 Social
 
 A full-stack social media app for my Capstone Project. 
 
-## Local Development
+This is a monorepo containing a
+- App
+- Website
+- API
+
+## 💻 Local Development
 
 ```
 yarn dev
 ```
 
-## Build for Production
+## 🖥️  Build for Production
 
 ```
 yarn build
