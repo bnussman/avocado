@@ -1,0 +1,10 @@
+node_modules/
+/dist
+dist/
+dist/**
+/build
+build/
+build/**
+.expo/
+.idea/
+.DS_Store
