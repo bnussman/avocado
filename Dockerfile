@@ -10,5 +10,5 @@ RUN npx tsc
 
 EXPOSE 3001
 
-CMD [ "node", "build/server.js" ]
+CMD [ "node", "build/index.js" ]
 
