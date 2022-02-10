@@ -4,12 +4,15 @@
   "description": "A social media app for my Capstone Project.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "concurrently -n api \"pnpm run dev --filter @avocado/api\""
   },
   "repository": {
     "type": "git",
     "url": "git@gitlab.nussman.us:banks/avocado.git"
   },
   "author": "Banks Nussman (banks@nussman.us)",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.0.0"
+  }
 }
