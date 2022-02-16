@@ -14,3 +14,15 @@ services:
         target: /usr/src/
         consistency: cached
     command: yarn dev:api
+  db:
+    image: mysql
+    ports:
+      - 3306:3306
+    volumes:
+      - db-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: avocado
+      TZ: America/New_York
+
+volumes:
+  db-data:
