@@ -1,9 +1,9 @@
 import "reflect-metadata";
+import { buildSchema } from "type-graphql";
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import express from 'express';
 import http from 'http';
-import {buildSchema} from "type-graphql";
 
 async function startApolloServer() {
   const app = express();
