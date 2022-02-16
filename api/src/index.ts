@@ -1,11 +1,11 @@
 import "reflect-metadata";
+import { MikroORM } from "@mikro-orm/core";
 import { buildSchema } from "type-graphql";
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import config from './mikro-orm.config';
 import express from 'express';
 import http from 'http';
-import config from './mikro-orm.config';
-import { MikroORM } from "@mikro-orm/core";
 
 async function startApolloServer() {
   const app = express();
@@ -18,7 +18,6 @@ async function startApolloServer() {
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
   });
 
-
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
@@ -30,7 +29,7 @@ async function startApolloServer() {
 
   await new Promise<void>(resolve => httpServer.listen({ port: 3001 }, resolve));
 
-  console.log(`🚀 Server ready at http://localhost:3001${server.graphqlPath}`);
+  console.log(`🥑 Avocado API Server ready at http://0.0.0.0:3001${server.graphqlPath}`);
 }
 
 startApolloServer();
