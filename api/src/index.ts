@@ -4,11 +4,15 @@ import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import express from 'express';
 import http from 'http';
+import config from './mikro-orm.config';
+import { MikroORM } from "@mikro-orm/core";
 
 async function startApolloServer() {
   const app = express();
 
   const httpServer = http.createServer(app);
+
+  const orm = await MikroORM.init(config);
 
   const schema = await buildSchema({
     resolvers: [__dirname + '/**/resolver.{ts,js}'],

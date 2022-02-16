@@ -8,6 +8,8 @@ services:
     working_dir: /usr/src
     ports:
       - "3001:3001"
+    depends_on:
+      - "db"
     volumes:
       - type: bind
         source: ./
@@ -22,6 +24,7 @@ services:
       - db-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: avocado
+      MYSQL_DATABASE: avocado
       TZ: America/New_York
 
 volumes:
