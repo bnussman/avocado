@@ -4,6 +4,7 @@
   "description": "A social media app for my Capstone Project.",
   "scripts": {
     "dev": "concurrently -n api,website -c cyan,magenta \"pnpm run dev --filter @avocado/api\" \"pnpm run dev --filter @avocado/website\"",
+    "dev:frontend": "concurrently -n app,website -c cyan,magenta \"pnpm run start --filter @avocado/app\" \"pnpm run dev --filter @avocado/website\"",
     "dev:api": "pnpm run dev --filter @avocado/api",
     "dev:website": "pnpm run dev --filter @avocado/website",
     "dev:app": "pnpm run start --filter @avocado/app",
