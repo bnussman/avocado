@@ -9,8 +9,11 @@
   },
   "private": true,
   "devDependencies": {
+    "@mikro-orm/cli": "^5.0.2",
+    "@types/uuid": "^8.3.4",
     "concurrently": "^7.0.0",
     "nodemon": "^2.0.15",
+    "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   },
   "dependencies": {
@@ -22,6 +25,14 @@
     "express": "^4.17.2",
     "graphql": "15.8.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^1.1.1"
+    "type-graphql": "^1.1.1",
+    "uuid": "^8.3.2"
+  },
+  "mikro-orm": {
+    "useTsNode": true,
+    "configPaths": [
+      "./src/mikro-orm.config.ts",
+      "./build/mikro-orm.config.js"
+    ]
   }
 }
