@@ -1,10 +1,10 @@
 # 🥑 Avocado
 
-A full-stack **social media app** for my Capstone Project. 
+A full-stack **social media app** for my Capstone Project 🎓
 
 ## 💻 Local Development
 
-### Dependencies
+### Dependencies🎓
 
 ```
 sudo apt-get install nodejs
@@ -36,6 +36,12 @@ pnpm install
 To run the development envrionment use
 ```
 pnpm dev
+```
+
+## 💾  Spin up a local Database
+
+```
+docker-compose up -d db
 ```
 
 ## 🖥️  Build for Production
