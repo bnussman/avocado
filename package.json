@@ -6,6 +6,7 @@
     "dev": "concurrently -n api,website -c cyan,magenta \"pnpm run dev --filter @avocado/api\" \"pnpm run dev --filter @avocado/website\"",
     "dev:api": "pnpm run dev --filter @avocado/api",
     "dev:website": "pnpm run dev --filter @avocado/website",
+    "dev:app": "pnpm run start --filter @avocado/app",
     "clean": "rm -rf node-modules/ && rm -rf api/node-modules/ && rm pnpm-lock.yaml"
   },
   "repository": {
