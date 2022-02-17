@@ -1,3 +1,3 @@
 FROM node:current-alpine 
 
-RUN sudo npm install -g pnpm
+RUN npm install -g pnpm
