@@ -1,16 +1,67 @@
-import {User} from "../entities/User";
-import {Mutation, Query, Resolver} from "type-graphql";
+import { Arg, Args, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Context } from "../utils/context";
+import { LoginArgs, SignUpArgs } from "./args";
+import { hash, compare } from "bcrypt";
+import { AuthenticationError } from "apollo-server-core";
+import { Token } from "../entities/Token";
+import { User } from "../entities/User";
+
+@ObjectType()
+class Auth {
+  @Field()
+  public user!: User;
+
+  @Field()
+  public token!: string;
+}
 
 @Resolver(User)
 export class UserResolver {
 
-  @Query(() => Boolean)
-  public async getUser(): Promise<boolean> {
-    return true;
+  @Query(() => User)
+  public async getUser(@Ctx() ctx: Context, @Arg('id', { nullable: true }) id?: string): Promise<User> {
+    return id ? await ctx.em.findOneOrFail(User, id) : ctx.user;
+  }
+
+
+  @Mutation(() => Auth)
+  public async signup(@Ctx() ctx: Context, @Args() args: SignUpArgs): Promise<Auth> {
+    const user = new User(args);
+    const token = new Token(user);
+
+    user.password = await hash(args.password, 10);
+
+    ctx.em.persistAndFlush([user, token]);
+
+    return {
+      user,
+      token: token.id,
+    };
+  }
+
+  @Mutation(() => Auth)
+  public async login(@Ctx() ctx: Context, @Args() { username, password }: LoginArgs): Promise<Auth> {
+    const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] });
+    const token = new Token(user);
+
+    const isPasswordCorrect = await compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      throw new AuthenticationError("Password is incorrect");
+    }
+
+    ctx.em.persistAndFlush(token);
+
+    return {
+      user,
+      token: token.id
+    };
   }
 
   @Mutation(() => Boolean)
-  public async deleteUser(): Promise<boolean> {
-    return false;
+  public async logout(@Ctx() ctx: Context) {
+    await ctx.em.removeAndFlush(ctx.token);
+
+    return true;
   }
 }

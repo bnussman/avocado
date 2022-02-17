@@ -1,11 +1,26 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
+import { Token } from "./entities/Token";
 import { buildSchema } from "type-graphql";
-import { ApolloServer } from 'apollo-server-express';
+import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
+import { ApolloServer, ExpressContext } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import config from './mikro-orm.config';
 import express from 'express';
 import http from 'http';
+
+async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
+  const context = { em: orm.em.fork() };
+
+  const bearer = ctx.req.get("Authorization")?.split(" ")[1];
+
+  if (!bearer) {
+    return context;
+  }
+
+  const token = await orm.em.fork().findOneOrFail(Token, bearer, { populate: ['user'] });
+
+  return { user: token.user, token, ...context };
+}
 
 async function startApolloServer() {
   const app = express();
@@ -21,6 +36,7 @@ async function startApolloServer() {
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    context: (ctx) => getContext(ctx, orm)
   });
 
   await server.start();
