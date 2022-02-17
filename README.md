@@ -4,7 +4,7 @@ A full-stack **social media app** for my Capstone Project 🎓
 
 ## 💻 Local Development
 
-### Dependencies🎓
+### Dependencies
 
 ```
 sudo apt-get install nodejs
@@ -49,7 +49,6 @@ docker-compose up -d db
 ```
 pnpm build
 ```
-
 
 ### Services running for local development
 
