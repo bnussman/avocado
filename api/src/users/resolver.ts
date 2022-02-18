@@ -1,4 +1,4 @@
-import { Arg, Args, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
+import { Arg, Args, Authorized, Ctx, Field, Mutation, ObjectType, Query, Resolver } from "type-graphql";
 import { Context } from "../utils/context";
 import { LoginArgs, SignUpArgs } from "./args";
 import { hash, compare } from "bcrypt";
@@ -19,6 +19,7 @@ class Auth {
 export class UserResolver {
 
   @Query(() => User)
+  @Authorized()
   public async getUser(@Ctx() ctx: Context, @Arg('id', { nullable: true }) id?: string): Promise<User> {
     return id ? await ctx.em.findOneOrFail(User, id) : ctx.user;
   }
@@ -41,7 +42,12 @@ export class UserResolver {
 
   @Mutation(() => Auth)
   public async login(@Ctx() ctx: Context, @Args() { username, password }: LoginArgs): Promise<Auth> {
-    const user = await ctx.em.findOneOrFail(User, { $or: [ { username }, { email: username } ] });
+    const user = await ctx.em.findOne(User, { $or: [ { username }, { email: username } ] });
+
+    if (!user) {
+      throw new AuthenticationError("User not found");
+    }
+
     const token = new Token(user);
 
     const isPasswordCorrect = await compare(password, user.password);
@@ -59,6 +65,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
+  @Authorized()
   public async logout(@Ctx() ctx: Context) {
     await ctx.em.removeAndFlush(ctx.token);
 

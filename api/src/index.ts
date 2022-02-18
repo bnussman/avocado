@@ -7,6 +7,7 @@ import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import config from './mikro-orm.config';
 import express from 'express';
 import http from 'http';
+import { authChecker } from "./utils/auth";
 
 async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const context = { em: orm.em.fork() };
@@ -17,9 +18,9 @@ async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Con
     return context;
   }
 
-  const token = await orm.em.fork().findOneOrFail(Token, bearer, { populate: ['user'] });
+  const token = await orm.em.fork().findOne(Token, bearer, { populate: ['user'] });
 
-  return { user: token.user, token, ...context };
+  return { user: token?.user, token, ...context };
 }
 
 async function startApolloServer() {
@@ -30,6 +31,7 @@ async function startApolloServer() {
   const orm = await MikroORM.init(config);
 
   const schema = await buildSchema({
+    authChecker: authChecker,
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
   });
 

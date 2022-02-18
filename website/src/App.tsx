@@ -4,23 +4,31 @@ import { LoginModal } from './components/LoginModal';
 import { GetUserQuery } from './generated/graphql';
 import { client } from './utils/apollo';
 
-const User = gql`
+export const User = gql`
   query GetUser {
     getUser {
       id
       first
       last
+      name
       username
+      email
     }
   }
 `;
 
 function Avocado() {
   const { data, loading, error } = useQuery<GetUserQuery>(User);
-  const { isOpen: isLoginOpen, onClose: onLoginClose, onOpen: onLoginOpen } = useDisclosure();
+
+  const {
+    isOpen: isLoginOpen,
+    onClose: onLoginClose,
+    onOpen: onLoginOpen
+  } = useDisclosure();
 
   return (
     <Box>
+      {data?.getUser && (<Box>Hello {data?.getUser.name}</Box>)}
       <Button onClick={onLoginOpen}>Login</Button>
       <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
     </Box>
