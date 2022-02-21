@@ -1,13 +1,37 @@
 import "reflect-metadata";
+import http from 'http';
+import express from 'express';
+import config from './mikro-orm.config';
 import { Token } from "./entities/Token";
 import { buildSchema } from "type-graphql";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { ApolloServer, ExpressContext } from 'apollo-server-express';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
-import config from './mikro-orm.config';
-import express from 'express';
-import http from 'http';
+import { ApolloError, ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { authChecker } from "./utils/auth";
+import { ValidationError } from 'class-validator';
+import { GraphQLError } from 'graphql';
+
+export function errorFormatter(error: GraphQLError) {
+  if (error?.message === "Argument Validation Error") {
+    const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
+
+    let output = {};
+
+    for (const error of errors) {
+      if (!error.constraints) continue;
+
+      const items = Object.values<string>(error.constraints);
+
+      // @ts-ignore
+      output[error.property] = items;
+    }
+    console.log(output);
+
+    return new ApolloError(JSON.stringify(output));
+  }
+
+  return error;
+}
 
 async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Connection>>) {
   const context = { em: orm.em.fork() };
@@ -38,7 +62,8 @@ async function startApolloServer() {
   const server = new ApolloServer({
     schema,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-    context: (ctx) => getContext(ctx, orm)
+    context: (ctx) => getContext(ctx, orm),
+    formatError: errorFormatter,
   });
 
   await server.start();
