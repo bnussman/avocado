@@ -1,6 +1,7 @@
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
-import { Box, Button, ChakraProvider, useDisclosure } from '@chakra-ui/react'
-import { LoginModal } from './components/LoginModal';
+import { Box, ChakraProvider, Container } from '@chakra-ui/react'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Header } from './components/Header';
 import { GetUserQuery } from './generated/graphql';
 import { client } from './utils/apollo';
 
@@ -18,20 +19,15 @@ export const User = gql`
 `;
 
 function Avocado() {
-  const { data, loading, error } = useQuery<GetUserQuery>(User);
-
-  const {
-    isOpen: isLoginOpen,
-    onClose: onLoginClose,
-    onOpen: onLoginOpen
-  } = useDisclosure();
+  const { data } = useQuery<GetUserQuery>(User);
 
   return (
-    <Box>
-      {data?.getUser && (<Box>Hello {data?.getUser.name}</Box>)}
-      <Button onClick={onLoginOpen}>Login</Button>
-      <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
-    </Box>
+    <Router>
+      <Header />
+      <Container maxW="container.xl">
+        {data?.getUser && (<Box>Hello {data?.getUser.name}</Box>)}
+      </Container>
+    </Router>
   )
 }
 
