@@ -5,9 +5,5 @@ export function useValidationErrors<T>(error: ApolloError | undefined) {
     return undefined;
   }
 
-  try {
-    return JSON.parse(error.message) as { [k in keyof T]: string[] };
-  } catch (e) {
-    return undefined;
-  }
+  return error?.graphQLErrors[0]?.extensions as { [k in keyof T]: string[] };
 }

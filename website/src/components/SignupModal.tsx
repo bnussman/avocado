@@ -46,7 +46,7 @@ interface Props {
 }
 
 export function SignupModal({ isOpen, onClose }: Props) {
-  const [signup, { error }] = useMutation<SignupMutation>(SignUp, { errorPolicy: 'all' });
+  const [signup, { error }] = useMutation<SignupMutation>(SignUp);
 
   const validationErrors = useValidationErrors<SignupMutationVariables>(error);
 

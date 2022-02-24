@@ -25,9 +25,8 @@ export function errorFormatter(error: GraphQLError) {
       // @ts-ignore
       output[error.property] = items;
     }
-    console.log(output);
 
-    return new Error(JSON.stringify(output));
+    return new ApolloError("Validation Error", undefined, output);
   }
 
   return error;
