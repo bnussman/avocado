@@ -45,7 +45,7 @@ interface Props {
 }
 
 export function SignupModal({ isOpen, onClose }: Props) {
-  const [signup, { error, loading }] = useMutation<SignupMutation>(SignUp);
+  const [signup, { error, loading }] = useMutation<SignupMutation>(SignUp, { errorPolicy: 'all' });
 
   const {
     handleSubmit,
@@ -70,6 +70,10 @@ export function SignupModal({ isOpen, onClose }: Props) {
       onClose();
     }
   });
+
+  if (error) {
+    console.log(JSON.parse(error.message));
+  }
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

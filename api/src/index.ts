@@ -27,7 +27,7 @@ export function errorFormatter(error: GraphQLError) {
     }
     console.log(output);
 
-    return new ApolloError(JSON.stringify(output));
+    return new Error(JSON.stringify(output));
   }
 
   return error;

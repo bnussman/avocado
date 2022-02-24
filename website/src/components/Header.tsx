@@ -1,4 +1,4 @@
-import Logo from '../assets/favicon.png';
+import Logo from '../assets/icon.png';
 import { client } from '../utils/apollo';
 import { SignupModal } from './SignupModal';
 import { User } from '../App';
@@ -69,64 +69,62 @@ export function Header() {
 
   return (
     <>
-      <Box px={4}>
-        <Flex h={16} alignItems='center' justifyContent='space-between'>
-          <IconButton
-            size='md'
-            icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-            aria-label='Open Menu'
-            display={{ md: !isOpen ? 'none' : 'inherit' }}
-            onClick={isOpen ? onClose : onOpen}
-          />
-          <HStack spacing={8} alignItems='center'>
-            <Box>
-              <Flex alignItems='center'>
-                <Flex
-                  backgroundColor='white'
-                  alignItems='center'
-                  justifyContent='center'
-                  borderRadius='lg'
-                  boxShadow="dark-lg"
-                  width={9}
-                  height={9}
-                >
-                  <Image h={6} src={Logo} />
-                </Flex>
-                <Box ml={4} as={Link} to='/' fontWeight="extrabold" fontSize="lg">Avocado</Box>
+      <Flex h={16} alignItems='center' justifyContent='space-between' px={4}>
+        <IconButton
+          size='md'
+          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+          aria-label='Open Menu'
+          display={{ md: !isOpen ? 'none' : 'inherit' }}
+          onClick={isOpen ? onClose : onOpen}
+        />
+        <HStack spacing={8} alignItems='center'>
+          <Box>
+            <Flex alignItems='center'>
+              <Flex
+                backgroundColor='white'
+                alignItems='center'
+                justifyContent='center'
+                borderRadius='xl'
+                boxShadow="dark-lg"
+                width={10}
+                height={10}
+              >
+                <Image h={8} src={Logo} />
               </Flex>
-            </Box>
-            <HStack
-              as='nav'
-              spacing={2}
-              display={{ base: 'none', md: 'flex' }}
-            >
-              {/* <Button as={Link} variant="ghost" to='/faq'>FAQ</Button>
+              <Box ml={3} as={Link} to='/' fontWeight="bold" fontSize="2xl">Avocado</Box>
+            </Flex>
+          </Box>
+          <HStack
+            as='nav'
+            spacing={2}
+            display={{ base: 'none', md: 'flex' }}
+          >
+            {/* <Button as={Link} variant="ghost" to='/faq'>FAQ</Button>
               <Button as={Link} variant="ghost" to='/about'>About</Button>
               <Button as={Link} variant="ghost" to='/download' target="_black">Download</Button> */}
-            </HStack>
           </HStack>
-          <Flex alignItems='center'>
-            <Stack
-              flex={{ base: 1, md: 0 }}
-              justify='flex-end'
-              direction='row'
-              spacing={4}
-              alignItems='center'
-            >
-              {!user && <Button onClick={onSignupOpen}>Sign Up</Button>}
-              {!user && <Button onClick={onLoginOpen}>Login</Button>}
-              {user && <Button onClick={onLogout} isLoading={loading}>Logout</Button>}
-              <Switch
-                isChecked={colorMode === "dark"}
-                onChange={toggleColorMode}
-                colorScheme="brand"
-                size="lg"
-                ml={2}
-              />
-            </Stack>
-          </Flex>
+        </HStack>
+        <Flex alignItems='center'>
+          <Stack
+            flex={{ base: 1, md: 0 }}
+            justify='flex-end'
+            direction='row'
+            spacing={4}
+            alignItems='center'
+          >
+            {!user && <Button onClick={onSignupOpen}>Sign Up</Button>}
+            {!user && <Button onClick={onLoginOpen}>Login</Button>}
+            {user && <Button onClick={onLogout} isLoading={loading}>Logout</Button>}
+            <Switch
+              isChecked={colorMode === "dark"}
+              onChange={toggleColorMode}
+              colorScheme="brand"
+              size="lg"
+              ml={2}
+            />
+          </Stack>
         </Flex>
-      </Box>
+      </Flex>
       {isOpen ? (
         <Box pb={4} pl={4}>
           <Stack as='nav' spacing={4}>
