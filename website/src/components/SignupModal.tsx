@@ -134,7 +134,7 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 </FormErrorMessage>
               </FormControl>
               <FormControl isInvalid={Boolean(errors.password)}>
-                <FormLabel htmlFor='password'></FormLabel>
+                <FormLabel htmlFor='password'>Password</FormLabel>
                 <InputGroup>
                   <Input
                     id='password'
