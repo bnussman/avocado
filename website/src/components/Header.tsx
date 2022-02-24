@@ -91,7 +91,17 @@ export function Header() {
               >
                 <Image h={8} src={Logo} />
               </Flex>
-              <Box ml={3} as={Link} to='/' fontWeight="bold" fontSize="2xl">Avocado</Box>
+              <Box
+                ml={3}
+                as={Link}
+                to='/'
+                fontWeight="extrabold"
+                fontSize="2xl"
+                bgGradient='linear(to-r, #59c173, #a17fe0, #5D26C1)'
+                bgClip='text'
+              >
+                Avocado
+              </Box>
             </Flex>
           </Box>
           <HStack

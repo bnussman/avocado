@@ -1,10 +1,11 @@
-import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
+import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
 import { Token } from "./Token";
 
 @ObjectType()
 @Entity()
+@Unique({ properties: ['email', 'username'] })
 export class User {
 
   constructor(values: Partial<User>) {

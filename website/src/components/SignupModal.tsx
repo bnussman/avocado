@@ -48,14 +48,14 @@ interface Props {
 export function SignupModal({ isOpen, onClose }: Props) {
   const [signup, { error }] = useMutation<SignupMutation>(SignUp);
 
-  const validationErrors = useValidationErrors<SignupMutationVariables>(error);
-
   const {
     handleSubmit,
     register,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<SignupMutationVariables>();
+
+  const validationErrors = useValidationErrors<SignupMutationVariables>(error);
 
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
