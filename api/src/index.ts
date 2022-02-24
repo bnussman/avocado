@@ -15,14 +15,13 @@ export function errorFormatter(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
     const errors = error?.extensions?.exception?.validationErrors as ValidationError[];
 
-    let output = {};
+    let output: { [key: string]: string[] } = {};
 
     for (const error of errors) {
       if (!error.constraints) continue;
 
       const items = Object.values<string>(error.constraints);
 
-      // @ts-ignore
       output[error.property] = items;
     }
 
