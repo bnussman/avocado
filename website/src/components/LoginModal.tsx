@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../generated/graphql";
 import { Error } from "../components/Error";
@@ -60,12 +60,16 @@ export function LoginModal({ isOpen, onClose }: Props) {
       // Refetch all except the user
       // client.refetchQueries({ include: 'all' });
 
-      setUsername("");
-      setPassword("");
-
       onClose();
     }
   };
+
+  useEffect(() => {
+    if (isOpen) {
+      setUsername("");
+      setPassword("");
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

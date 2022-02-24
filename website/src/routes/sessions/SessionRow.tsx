@@ -1,12 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { Tr, Td, IconButton, useToast } from "@chakra-ui/react";
+import { Tr, Td, IconButton, useToast, Badge } from "@chakra-ui/react";
 import { Tokens } from ".";
 import { User } from "../../App";
+import { Hidden } from "../../components/Hidden";
 import { DeleteTokenMutation, GetTokensQuery } from "../../generated/graphql";
 import { client } from "../../utils/apollo";
-
-export type Unpacked<T> = T extends (infer U)[] ? U : T;
+import { Unpacked } from "../../utils/types";
+import { DateTime } from 'luxon';
 
 const DeleteToken = gql`
   mutation DeleteToken($id: String!) {
@@ -19,11 +20,11 @@ export function SessionRow({ id, created }: Unpacked<GetTokensQuery['getTokens']
 
   const [remove, { loading }] = useMutation<DeleteTokenMutation>(DeleteToken);
 
+  const currentToken = localStorage.getItem('token');
+
+  const isCurrentSession = currentToken === id;
+
   async function deleteToken(id: string) {
-    const currentToken = localStorage.getItem('token');
-
-    const isCurrentSession = currentToken === id;
-
     remove({
       variables: { id },
       refetchQueries: [Tokens],
@@ -40,8 +41,16 @@ export function SessionRow({ id, created }: Unpacked<GetTokensQuery['getTokens']
 
   return (
     <Tr key={id}>
-      <Td>{id}</Td>
-      <Td>{created}</Td>
+      <Td whiteSpace="nowrap">
+        {id}
+        {isCurrentSession && <Badge mx={4} variant='solid' colorScheme="green">Current Session</Badge>}
+      </Td>
+      <Hidden sm>
+        <Td>{new Date(created).toLocaleString()}</Td>
+      </Hidden>
+      <Hidden md>
+        <Td>{DateTime.fromISO(created).toRelative()}</Td>
+      </Hidden>
       <Td textAlign="right">
         <IconButton
           isLoading={loading}

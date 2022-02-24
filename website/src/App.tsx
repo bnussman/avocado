@@ -20,6 +20,12 @@ export const User = gql`
 `;
 
 function Avocado() {
+  const { loading } = useQuery<GetUserQuery>(User);
+
+  if (loading) {
+    return null;
+  }
+
   return (
     <BrowserRouter>
       <Header />

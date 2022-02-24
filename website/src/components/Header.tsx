@@ -71,7 +71,7 @@ export function Header() {
 
   return (
     <>
-      <Flex h={16} alignItems='center' justifyContent='space-between' px={4}>
+      <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
         <IconButton
           size='md'
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}

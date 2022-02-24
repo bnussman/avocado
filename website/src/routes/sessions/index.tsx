@@ -6,6 +6,7 @@ import { Error } from "../../components/Error";
 import { Loading } from "../../components/Loading";
 import { Box, Flex, Heading, Spacer, Table, Tbody, Th, Thead, Tr, useToast } from "@chakra-ui/react";
 import { SessionRow } from "./SessionRow";
+import { Hidden } from "../../components/Hidden";
 
 export const Tokens = gql`
   query GetTokens {
@@ -21,8 +22,6 @@ export const Tokens = gql`
 
 export function Sessions() {
   const { data, error, loading, refetch } = useQuery<GetTokensQuery>(Tokens);
-
-  const toast = useToast();
 
   const tokens = data?.getTokens.data;
   const count = data?.getTokens.count;
@@ -47,20 +46,27 @@ export function Sessions() {
           onPageChange={fetchBeeps}
         />
       </Flex>
-      <Table>
-        <Thead>
-          <Tr>
-            <Th>Token</Th>
-            <Th>Created</Th>
-            <Th></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {tokens && tokens.map((token) => (
-            <SessionRow {...token} />
-          ))}
-        </Tbody>
-      </Table>
+      <Box overflowX="auto">
+        <Table maxW="100%">
+          <Thead>
+            <Tr>
+              <Th>Token</Th>
+              <Hidden sm>
+                <Th>Created</Th>
+              </Hidden>
+              <Hidden md>
+                <Th>Created</Th>
+              </Hidden>
+              <Th></Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {tokens && tokens.map((token) => (
+              <SessionRow key={token.id} {...token} />
+            ))}
+          </Tbody>
+        </Table>
+      </Box>
       {loading && <Loading />}
     </Box>
   );
