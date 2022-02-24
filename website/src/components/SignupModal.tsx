@@ -4,7 +4,8 @@ import { Error } from "../components/Error";
 import { client } from "../utils/apollo";
 import { User } from "../App";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useValidationErrors } from "../utils/useValidationErrors";
 import {
   Button,
   FormControl,
@@ -45,11 +46,14 @@ interface Props {
 }
 
 export function SignupModal({ isOpen, onClose }: Props) {
-  const [signup, { error, loading }] = useMutation<SignupMutation>(SignUp, { errorPolicy: 'all' });
+  const [signup, { error }] = useMutation<SignupMutation>(SignUp, { errorPolicy: 'all' });
+
+  const validationErrors = useValidationErrors<SignupMutationVariables>(error);
 
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<SignupMutationVariables>();
 
@@ -71,9 +75,11 @@ export function SignupModal({ isOpen, onClose }: Props) {
     }
   });
 
-  if (error) {
-    console.log(JSON.parse(error.message));
-  }
+  useEffect(() => {
+    if (isOpen) {
+      reset();
+    }
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -83,9 +89,9 @@ export function SignupModal({ isOpen, onClose }: Props) {
           <ModalHeader>Sign Up</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {error && <Error error={error} />}
+            {error && !validationErrors ? <Error error={error} /> : null}
             <Stack spacing={2}>
-              <FormControl isInvalid={Boolean(errors.first)}>
+              <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
                 <FormLabel htmlFor='first'>First name</FormLabel>
                 <Input
                   id='first'
@@ -96,9 +102,10 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 />
                 <FormErrorMessage>
                   {errors.first && errors.first.message}
+                  {validationErrors?.first && validationErrors?.first[0]}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={Boolean(errors.last)}>
+              <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
                 <FormLabel htmlFor='last'>Last name</FormLabel>
                 <Input
                   id='last'
@@ -109,9 +116,10 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 />
                 <FormErrorMessage>
                   {errors.last && errors.last.message}
+                  {validationErrors?.last && validationErrors?.last[0]}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={Boolean(errors.email)}>
+              <FormControl isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}>
                 <FormLabel htmlFor='email'>Email</FormLabel>
                 <Input
                   id='email'
@@ -122,9 +130,10 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 />
                 <FormErrorMessage>
                   {errors.email && errors.email.message}
+                  {validationErrors?.email && validationErrors?.email[0]}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={Boolean(errors.username)}>
+              <FormControl isInvalid={Boolean(errors.username) || Boolean(validationErrors?.username)}>
                 <FormLabel htmlFor='username'>Username</FormLabel>
                 <Input
                   id='username'
@@ -135,9 +144,10 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 />
                 <FormErrorMessage>
                   {errors.username && errors.username.message}
+                  {validationErrors?.username && validationErrors?.username[0]}
                 </FormErrorMessage>
               </FormControl>
-              <FormControl isInvalid={Boolean(errors.password)}>
+              <FormControl isInvalid={Boolean(errors.password) || Boolean(validationErrors?.password)}>
                 <FormLabel htmlFor='password'>Password</FormLabel>
                 <InputGroup>
                   <Input
@@ -156,6 +166,7 @@ export function SignupModal({ isOpen, onClose }: Props) {
                 </InputGroup>
                 <FormErrorMessage>
                   {errors.password && errors.password.message}
+                  {validationErrors?.password && validationErrors?.password[0]}
                 </FormErrorMessage>
               </FormControl>
             </Stack>
