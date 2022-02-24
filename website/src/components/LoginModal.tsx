@@ -57,6 +57,9 @@ export function LoginModal({ isOpen, onClose }: Props) {
         data: { getUser: { ...data?.login.user } }
       });
 
+      // Refetch all except the user
+      // client.refetchQueries({ include: 'all' });
+
       setUsername("");
       setPassword("");
 

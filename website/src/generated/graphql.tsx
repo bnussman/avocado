@@ -25,9 +25,15 @@ export type Auth = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  deleteToken: Scalars['Boolean'];
   login: Auth;
   logout: Scalars['Boolean'];
   signup: Auth;
+};
+
+
+export type MutationDeleteTokenArgs = {
+  id: Scalars['String'];
 };
 
 
@@ -47,7 +53,15 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  getTokens: TokensResponse;
   getUser: User;
+};
+
+
+export type QueryGetTokensArgs = {
+  limit?: InputMaybe<Scalars['Int']>;
+  offset?: InputMaybe<Scalars['Int']>;
+  query?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -61,6 +75,12 @@ export type Token = {
   id: Scalars['String'];
   updated: Scalars['DateTime'];
   user: User;
+};
+
+export type TokensResponse = {
+  __typename?: 'TokensResponse';
+  count: Scalars['Int'];
+  data: Array<Token>;
 };
 
 export type User = {
@@ -103,6 +123,18 @@ export type SignupMutationVariables = Exact<{
 
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } } };
+
+export type GetTokensQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetTokensQuery = { __typename?: 'Query', getTokens: { __typename?: 'TokensResponse', count: number, data: Array<{ __typename?: 'Token', created: any, id: string }> } };
+
+export type DeleteTokenMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteTokenMutation = { __typename?: 'Mutation', deleteToken: boolean };
 
 
 export const GetUserDocument = gql`
@@ -267,3 +299,72 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const GetTokensDocument = gql`
+    query GetTokens {
+  getTokens {
+    data {
+      created
+      id
+    }
+    count
+  }
+}
+    `;
+
+/**
+ * __useGetTokensQuery__
+ *
+ * To run a query within a React component, call `useGetTokensQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTokensQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTokensQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetTokensQuery(baseOptions?: Apollo.QueryHookOptions<GetTokensQuery, GetTokensQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTokensQuery, GetTokensQueryVariables>(GetTokensDocument, options);
+      }
+export function useGetTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTokensQuery, GetTokensQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTokensQuery, GetTokensQueryVariables>(GetTokensDocument, options);
+        }
+export type GetTokensQueryHookResult = ReturnType<typeof useGetTokensQuery>;
+export type GetTokensLazyQueryHookResult = ReturnType<typeof useGetTokensLazyQuery>;
+export type GetTokensQueryResult = Apollo.QueryResult<GetTokensQuery, GetTokensQueryVariables>;
+export const DeleteTokenDocument = gql`
+    mutation DeleteToken($id: String!) {
+  deleteToken(id: $id)
+}
+    `;
+export type DeleteTokenMutationFn = Apollo.MutationFunction<DeleteTokenMutation, DeleteTokenMutationVariables>;
+
+/**
+ * __useDeleteTokenMutation__
+ *
+ * To run a mutation, you first call `useDeleteTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTokenMutation, { data, loading, error }] = useDeleteTokenMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTokenMutation(baseOptions?: Apollo.MutationHookOptions<DeleteTokenMutation, DeleteTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteTokenMutation, DeleteTokenMutationVariables>(DeleteTokenDocument, options);
+      }
+export type DeleteTokenMutationHookResult = ReturnType<typeof useDeleteTokenMutation>;
+export type DeleteTokenMutationResult = Apollo.MutationResult<DeleteTokenMutation>;
+export type DeleteTokenMutationOptions = Apollo.BaseMutationOptions<DeleteTokenMutation, DeleteTokenMutationVariables>;

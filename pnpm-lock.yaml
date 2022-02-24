@@ -89,6 +89,7 @@ importers:
       '@types/react-dom': ^17.0.10
       '@vitejs/plugin-react': ^1.0.7
       framer-motion: ^6
+      luxon: ^2.3.1
       react: ^17.0.2
       react-dom: ^17.0.2
       react-hook-form: ^7.27.1
@@ -102,6 +103,7 @@ importers:
       '@emotion/react': 11.7.1_a0c521d4794c7ad97f5f4c1c4a7d5818
       '@emotion/styled': 11.6.0_6051c8b70bfa52211d6f419a3c4413f0
       framer-motion: 6.2.6_react-dom@17.0.2+react@17.0.2
+      luxon: 2.3.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-hook-form: 7.27.1_react@17.0.2
@@ -7712,6 +7714,11 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+
+  /luxon/2.3.1:
+    resolution: {integrity: sha512-I8vnjOmhXsMSlNMZlMkSOvgrxKJl0uOsEzdGgGNZuZPaS9KlefpE9KV95QFftlJSC+1UyCC9/I69R02cz/zcCA==}
+    engines: {node: '>=12'}
+    dev: false
 
   /make-dir/2.1.0:
     resolution: {integrity: sha512-LS9X+dc8KLxXCb8dni79fLIIUA5VyZoyjSMCwTluaXA0o27cCK0bhXkpgw+sTXVpPy/lSO57ilRixqk0vDmtRA==}

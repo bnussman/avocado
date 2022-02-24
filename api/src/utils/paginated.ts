@@ -24,7 +24,7 @@ export class PaginationArgs {
   @Field(type => Int, { nullable: true })
   @Min(1)
   @Max(50)
-  limit?: number;
+  limit: number = 25;
 
   @Field(type => String, { nullable: true })
   query?: string;

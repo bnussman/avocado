@@ -1,8 +1,9 @@
 import { ApolloProvider, gql, useQuery } from '@apollo/client';
-import { Box, ChakraProvider, Container } from '@chakra-ui/react'
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { ChakraProvider, Container } from '@chakra-ui/react'
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Header } from './components/Header';
 import { GetUserQuery } from './generated/graphql';
+import { Sessions } from './routes/sessions';
 import { client } from './utils/apollo';
 
 export const User = gql`
@@ -19,15 +20,15 @@ export const User = gql`
 `;
 
 function Avocado() {
-  const { data } = useQuery<GetUserQuery>(User);
-
   return (
-    <Router>
+    <BrowserRouter>
       <Header />
       <Container maxW="container.xl">
-        {data?.getUser && (<Box>Hello {data?.getUser.name}</Box>)}
+        <Routes>
+          <Route path="/sessions" element={<Sessions />} />
+        </Routes>
       </Container>
-    </Router>
+    </BrowserRouter>
   )
 }
 

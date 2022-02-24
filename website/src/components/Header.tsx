@@ -60,6 +60,8 @@ export function Header() {
         query: User,
         data: { getUser: null }
       });
+
+      client.resetStore();
     }
 
     if (errors) {
