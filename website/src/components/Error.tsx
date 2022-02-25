@@ -1,5 +1,5 @@
 import { ApolloError } from "@apollo/client";
-import { Text, Alert, AlertIcon, Box } from "@chakra-ui/react";
+import { Alert, AlertIcon, Box } from "@chakra-ui/react";
 
 interface Props {
   error: ApolloError;
