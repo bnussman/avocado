@@ -57,8 +57,10 @@ export function LoginModal({ isOpen, onClose }: Props) {
         data: { getUser: { ...data?.login.user } }
       });
 
-      // Refetch all except the user
-      // client.refetchQueries({ include: 'all' });
+      const oq = Array.from(client.getObservableQueries().values());
+      const toRefetch = oq.map((query) => query.queryName).filter(queryName => queryName !== 'GetUser' && queryName !== undefined) as string[];
+
+      client.refetchQueries({ include: toRefetch });
 
       onClose();
     }
