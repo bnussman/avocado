@@ -28,7 +28,7 @@ const Logout = gql`
 `;
 
 export function Header() {
-  const { data } = useQuery<GetUserQuery>(User);
+  const { data } = useQuery<GetUserQuery>(User, { fetchPolicy: 'cache-only', errorPolicy: "none" });
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();

@@ -20,7 +20,7 @@ export const User = gql`
 `;
 
 function Avocado() {
-  const { loading } = useQuery<GetUserQuery>(User);
+  const { loading } = useQuery<GetUserQuery>(User, { errorPolicy: "none" });
 
   if (loading) {
     return null;
