@@ -24,7 +24,6 @@ export class UserResolver {
     return id ? await ctx.em.findOneOrFail(User, id) : ctx.user;
   }
 
-
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Args() args: SignUpArgs): Promise<Auth> {
     const user = new User(args);

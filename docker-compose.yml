@@ -1,21 +1,25 @@
 version: '3.5'
 
 services:
-  api:
-    image: image
-    build:
-      context: .gitlab
-    working_dir: /usr/src
+  # api:
+  #   image: image
+  #   build:
+  #     context: .gitlab
+  #   working_dir: /usr/src
+  #   ports:
+  #     - "3001:3001"
+  #   depends_on:
+  #     - "db"
+  #   volumes:
+  #     - type: bind
+  #       source: ./
+  #       target: /usr/src/
+  #       consistency: cached
+  #   command: yarn dev:api
+  redis:
+    image: redis:alpine
     ports:
-      - "3001:3001"
-    depends_on:
-      - "db"
-    volumes:
-      - type: bind
-        source: ./
-        target: /usr/src/
-        consistency: cached
-    command: yarn dev:api
+      - 6379:6379
   db:
     image: mysql
     ports:
@@ -26,6 +30,7 @@ services:
       MYSQL_ROOT_PASSWORD: avocado
       MYSQL_DATABASE: avocado
       TZ: America/New_York
+
 
 volumes:
   db-data:

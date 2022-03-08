@@ -1,15 +1,52 @@
 import "reflect-metadata";
-import http from 'http';
+import { createServer } from 'http';
 import express from 'express';
 import config from './mikro-orm.config';
+import Redis from 'ioredis';
 import { Token } from "./entities/Token";
 import { buildSchema } from "type-graphql";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { ApolloServer, ExpressContext } from 'apollo-server-express';
-import { ApolloError, ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import { ApolloError, ApolloServerPluginDrainHttpServer, Context } from 'apollo-server-core';
 import { authChecker } from "./utils/auth";
 import { ValidationError } from 'class-validator';
-import { GraphQLError } from 'graphql';
+import { GraphQLError, GraphQLSchema, parse } from 'graphql';
+import { RedisPubSub } from "graphql-redis-subscriptions";
+import { WebSocketServer } from "ws";
+import { useServer } from 'graphql-ws/lib/use/ws';
+import { Context as WSContext, SubscribeMessage } from "graphql-ws";
+
+async function onSubscribe(
+  { connectionParams }: WSContext<Record<string, unknown> | undefined>,
+  msg: SubscribeMessage,
+  schema: GraphQLSchema,
+  orm: MikroORM<IDatabaseDriver<Connection>>
+) {
+  const bearer = connectionParams?.token as string | undefined;
+
+  if (!bearer) {
+    throw new Error("No Authentication Token Provided");
+  }
+
+  const token = await orm.em.fork().findOne(
+    Token,
+    bearer,
+    {
+      populate: ['user'],
+      cache: true
+    }
+  );
+
+  if (token) {
+    return {
+      contextValue: { user: token.user, token },
+      schema,
+      document: parse(msg.payload.query),
+      variableValues: msg.payload.variables
+    }
+  }
+}
+
 
 export function errorFormatter(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
@@ -40,7 +77,7 @@ async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Con
     return context;
   }
 
-  const token = await orm.em.fork().findOne(Token, bearer, { populate: ['user'] });
+  const token = await orm.em.fork().findOne(Token, bearer, { populate: ['user'], cache: true });
 
   return { user: token?.user, token, ...context };
 }
@@ -48,20 +85,52 @@ async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Con
 async function startApolloServer() {
   const app = express();
 
-  const httpServer = http.createServer(app);
+  const httpServer = createServer(app);
 
   const orm = await MikroORM.init(config);
+
+  const options = {
+    host: 'localhost',
+    port: 6379,
+  };
+
+  const pubSub = new RedisPubSub({
+    publisher: new Redis(options),
+    subscriber: new Redis(options)
+  });
 
   const schema = await buildSchema({
     authChecker: authChecker,
     resolvers: [__dirname + '/**/resolver.{ts,js}'],
+    pubSub
   });
+
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/subscriptions',
+  });
+
+  const serverCleanup = useServer({
+    schema,
+    onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm)
+  }, wsServer);
 
   const server = new ApolloServer({
     schema,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
     context: (ctx) => getContext(ctx, orm),
     formatError: errorFormatter,
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+    ],
   });
 
   await server.start();
