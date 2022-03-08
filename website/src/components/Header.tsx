@@ -111,9 +111,7 @@ export function Header() {
             spacing={2}
             display={{ base: 'none', md: 'flex' }}
           >
-            {/* <Button as={Link} variant="ghost" to='/faq'>FAQ</Button>
-              <Button as={Link} variant="ghost" to='/about'>About</Button>
-              <Button as={Link} variant="ghost" to='/download' target="_black">Download</Button> */}
+            <Button as={Link} variant="ghost" to='/sessions'>Sessions</Button>
           </HStack>
         </HStack>
         <Flex alignItems='center'>
@@ -140,9 +138,7 @@ export function Header() {
       {isOpen ? (
         <Box pb={4} pl={4}>
           <Stack as='nav' spacing={4}>
-            {/* <Link to='/faq'>FAQ</Link>
-            <Link to='/about'>About</Link>
-            <Link to='/download' target="_blank">Download</Link> */}
+            <Link to='/sessions'>Sessions</Link>
           </Stack>
         </Box>
       ) : null}

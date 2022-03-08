@@ -12,7 +12,7 @@ export class TokenResolver {
   @Query(() => TokensResponse)
   @Authorized()
   public async getTokens(@Ctx() ctx: Context, @Args() { offset, limit }: PaginationArgs): Promise<TokensResponse> {
-    const [tokens, count] = await ctx.em.findAndCount(Token, {}, { limit, offset });
+    const [tokens, count] = await ctx.em.findAndCount(Token, { user: ctx.user.id }, { limit, offset });
 
     return {
       data: tokens,

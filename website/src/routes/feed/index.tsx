@@ -3,7 +3,7 @@ import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { AddIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
-import { GetPostsQuery } from '../../generated/graphql';
+import { GetPostsQuery, GetUserQuery } from '../../generated/graphql';
 import { Post } from './Post';
 import { useEffect, useRef, useState } from 'react';
 import {
@@ -16,6 +16,7 @@ import {
   Stack
 } from '@chakra-ui/react';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
+import { User } from '../../App';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -51,6 +52,7 @@ const NewPost = gql`
 let subscription: any;
 
 export function Feed() {
+  const { data: userData } = useQuery<GetUserQuery>(User, { fetchPolicy: 'cache-only' });
   const { data, loading, error, subscribeToMore, fetchMore } = useQuery<GetPostsQuery>(
     Posts,
     {
@@ -64,6 +66,7 @@ export function Feed() {
 
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
+  const user = userData?.getUser;
 
   const canLoadMore = posts && posts.length < count;
 
@@ -102,6 +105,7 @@ export function Feed() {
         <Heading>Feed</Heading>
         <Spacer />
         <Button
+          isDisabled={!user}
           colorScheme="purple"
           rightIcon={<AddIcon />}
           onClick={onOpen}

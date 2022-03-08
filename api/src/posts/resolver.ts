@@ -12,7 +12,6 @@ export class PostsResponse extends Paginated(Post) {}
 export class PostsResolver {
 
   @Query(() => PostsResponse)
-  @Authorized()
   public async getPosts(@Ctx() ctx: Context, @Args() { offset, limit }: PaginationArgs): Promise<PostsResponse> {
     const [posts, count] = await ctx.em.findAndCount(Post, {}, {
       limit,
@@ -53,7 +52,6 @@ export class PostsResolver {
   }
 
   @Subscription(() => Post, { topics: "post" })
-  @Authorized('No Verification')
   public newPost(@Root() post: Post): Post {
     return post;
   }

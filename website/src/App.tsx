@@ -22,14 +22,12 @@ export const User = gql`
 `;
 
 function Avocado() {
-  const { data, loading } = useQuery<GetUserQuery>(User);
+  const { loading } = useQuery<GetUserQuery>(User);
 
 
   if (loading) {
     return null;
   }
-
-  const user = data?.getUser;
 
   return (
     <BrowserRouter>
@@ -37,7 +35,7 @@ function Avocado() {
       <Container maxW="container.xl">
         <Routes>
           <Route path="/sessions" element={<Sessions />} />
-          <Route path="/" element={user ? <Feed /> : <Home /> } />
+          <Route path="/" element={<Feed />} />
         </Routes>
       </Container>
     </BrowserRouter>
