@@ -71,9 +71,15 @@ export type Post = {
   user: User;
 };
 
+export type PostsResponse = {
+  __typename?: 'PostsResponse';
+  count: Scalars['Int'];
+  data: Array<Post>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  getPosts: Array<Post>;
+  getPosts: PostsResponse;
   getTokens: TokensResponse;
   getUser: User;
 };
@@ -171,7 +177,7 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } }> };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } }> } };
 
 export type NewPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -393,13 +399,16 @@ export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, S
 export const GetPostsDocument = gql`
     query GetPosts($offset: Int, $limit: Int) {
   getPosts(offset: $offset, limit: $limit) {
-    id
-    body
-    user {
+    data {
       id
-      name
-      username
+      body
+      user {
+        id
+        name
+        username
+      }
     }
+    count
   }
 }
     `;

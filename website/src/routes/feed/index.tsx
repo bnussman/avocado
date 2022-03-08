@@ -1,12 +1,11 @@
 import { NewPostModal } from '../../components/NewPostModal';
-import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { AddIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Flex,
   Heading,
@@ -16,17 +15,21 @@ import {
   useDisclosure,
   Stack
 } from '@chakra-ui/react';
+import { MAX_PAGE_SIZE } from '../../utils/constants';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
     getPosts(offset: $offset, limit: $limit) {
-      id
-      body
-      user {
+      data {
         id
-        name
-        username
+        body
+        user {
+          id
+          name
+          username
+        }
       }
+      count
     }
   }
 `;
@@ -51,22 +54,23 @@ export function Feed() {
   const { data, loading, error, subscribeToMore, fetchMore } = useQuery<GetPostsQuery>(
     Posts,
     {
-      fetchPolicy: 'cache-and-network',
-      nextFetchPolicy: 'cache-first',
       variables: {
+        offset: 0,
         limit: MAX_PAGE_SIZE,
       }
     }
   );
   const { isOpen, onClose, onOpen } = useDisclosure();
 
-  const posts = data?.getPosts;
+  const posts = data?.getPosts.data;
+  const count = data?.getPosts.count || 0;
+
+  const canLoadMore = posts && posts.length < count;
 
   const loadMore = () => {
-    console.log("should see", posts?.length);
     fetchMore({
       variables: {
-        offset: data?.getPosts.length || 0,
+        offset: posts?.length || 0,
         limit: MAX_PAGE_SIZE
       },
     });
@@ -79,7 +83,10 @@ export function Feed() {
         // @ts-ignore how is this type still incorrect apollo, you're trash
         const post = subscriptionData.data.newPost;
         return {
-          getPosts: [post, ...prev.getPosts],
+          getPosts: {
+            data: [post, ...prev.getPosts.data],
+            count: prev.getPosts.count + 1
+          }
         };
       }
     });
@@ -108,7 +115,7 @@ export function Feed() {
         {posts?.map((post) => (
           <Post key={post.id} {...post} />
         ))}
-        {<Button onClick={loadMore}>Load More</Button>}
+        {canLoadMore && <Button onClick={loadMore}>Load More</Button>}
       </Stack>
       <NewPostModal
         isOpen={isOpen}
