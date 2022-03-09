@@ -33,7 +33,6 @@ async function onSubscribe(
     bearer,
     {
       populate: ['user'],
-      cache: 50,
     }
   );
 
@@ -77,7 +76,7 @@ async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Con
     return context;
   }
 
-  const token = await orm.em.fork().findOne(Token, bearer, { populate: ['user'], cache: 50 });
+  const token = await orm.em.fork().findOne(Token, bearer, { populate: ['user'] });
 
   return { user: token?.user, token, ...context };
 }

@@ -5,7 +5,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery, GetUserQuery } from '../../generated/graphql';
 import { Post } from './Post';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Flex,
   Heading,
@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { User } from '../../App';
+import { Waypoint } from 'react-waypoint';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -114,13 +115,13 @@ export function Feed() {
         </Button>
       </Flex>
       {error && <Error error={error} />}
-      {loading && <Loading />}
       <Stack spacing={4}>
         {posts?.map((post) => (
           <Post key={post.id} {...post} />
         ))}
-        {canLoadMore && <Button onClick={loadMore}>Load More</Button>}
       </Stack>
+      {canLoadMore && <Waypoint onEnter={loadMore}><Box><Loading /></Box></Waypoint>}
+      {loading && <Loading />}
       <NewPostModal
         isOpen={isOpen}
         onClose={onClose}

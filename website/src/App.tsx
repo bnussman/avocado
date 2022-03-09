@@ -32,7 +32,7 @@ function Avocado() {
   return (
     <BrowserRouter>
       <Header />
-      <Container maxW="container.xl">
+      <Container maxW="container.lg">
         <Routes>
           <Route path="/sessions" element={<Sessions />} />
           <Route path="/" element={<Feed />} />

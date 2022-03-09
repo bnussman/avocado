@@ -9,7 +9,6 @@ import {
   FetchResult,
   Observable,
 } from '@apollo/client/core';
-import { MAX_PAGE_SIZE } from "./constants";
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
@@ -34,6 +33,7 @@ class WebSocketLink extends ApolloLink {
 }
 
 const wsLink = new WebSocketLink({
+  lazy: false,
   url: 'ws://localhost:3001/subscriptions',
   connectionParams: () => {
     const token = localStorage.getItem('token');
