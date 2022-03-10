@@ -2,13 +2,14 @@ import { NewPostModal } from '../../components/NewPostModal';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { AddIcon } from '@chakra-ui/icons';
-import { gql, useQuery, useSubscription } from '@apollo/client';
+import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
 import { useEffect } from 'react';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { Waypoint } from 'react-waypoint';
 import { useUser } from '../../utils/useUser';
+import { client } from '../../utils/apollo';
 import {
   Flex,
   Heading,
@@ -18,7 +19,6 @@ import {
   useDisclosure,
   Stack
 } from '@chakra-ui/react';
-import { client } from '../../utils/apollo';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -84,57 +84,6 @@ export function Feed() {
     });
   };
 
-  // useSubscription(RemovePost, {
-  //   onSubscriptionData: ({ client, subscriptionData }) => {
-  //     const id = subscriptionData.data.removePost;
-  //     const normalizedId = client.cache.identify({ id, __typename: 'Post' });
-  //     client.cache.evict({ id: normalizedId });
-  //     client.cache.gc();
-  //     client.writeQuery({
-  //       query: Posts,
-  //       data: {
-  //         getPosts: {
-  //           data: posts?.filter(post => post.id !== id),
-  //           count: count - 1
-  //         }
-  //       }
-  //     });
-  //   }
-  // });
-
-  // useSubscription(RemovePost, {
-  //   onSubscriptionData: ({ client, subscriptionData }) => {
-  //     // if we don't have posts, no reason to delete anything
-  //     if (!posts) return;
-
-  //     // the id of the post to remove
-  //     const id = subscriptionData.data.removePost as string;
-
-  //     // find the index of the post in the current data array
-  //     const idx = posts.findIndex(post => post.id === id) || -1;
-
-  //     // if the post is not found (idx is -1), don't do anything. It's probably not loaded
-  //     if (idx < 0) return;
-
-  //     const data = [...posts];
-
-  //     data.splice(idx, 1);
-
-  //     console.log("deleting", id);
-
-  //     client.writeQuery({
-  //       query: Posts,
-  //       data: {
-  //         getPosts: {
-  //           data,
-  //           count: count - 1
-  //         }
-  //       }
-  //     });
-  //   }
-  // });
-
-
   useEffect(() => {
     subscribeToMore({
       document: AddPost,
@@ -154,9 +103,19 @@ export function Feed() {
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-ignore how is this type still incorrect apollo, you're trash
         const id = subscriptionData.data.removePost;
+
         const normalizedId = client.cache.identify({ id, __typename: 'Post' });
+
+        const idx = prev.getPosts.data.findIndex(post => post.id === id);
+
+        if (!id || !normalizedId || idx === -1) return prev;
+
         client.cache.evict({ id: normalizedId });
-        // client.cache.gc();
+
+        const data = [...prev.getPosts.data]
+
+        data.splice(idx, 1);
+
         return {
           getPosts: {
             data: prev.getPosts.data?.filter(post => post.id !== id),
