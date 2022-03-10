@@ -2,10 +2,13 @@ import { NewPostModal } from '../../components/NewPostModal';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
 import { AddIcon } from '@chakra-ui/icons';
-import { gql, useQuery } from '@apollo/client';
-import { GetPostsQuery, GetUserQuery } from '../../generated/graphql';
+import { gql, useQuery, useSubscription } from '@apollo/client';
+import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
 import { useEffect } from 'react';
+import { MAX_PAGE_SIZE } from '../../utils/constants';
+import { Waypoint } from 'react-waypoint';
+import { useUser } from '../../utils/useUser';
 import {
   Flex,
   Heading,
@@ -15,9 +18,7 @@ import {
   useDisclosure,
   Stack
 } from '@chakra-ui/react';
-import { MAX_PAGE_SIZE } from '../../utils/constants';
-import { User } from '../../App';
-import { Waypoint } from 'react-waypoint';
+import { client } from '../../utils/apollo';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -36,9 +37,9 @@ const Posts = gql`
   }
 `;
 
-const NewPost = gql`
-  subscription NewPost {
-    newPost {
+const AddPost = gql`
+  subscription AddPost {
+    addPost {
       id
       body
       user {
@@ -50,10 +51,16 @@ const NewPost = gql`
   }
 `;
 
-let subscription: any;
+const RemovePost = gql`
+  subscription Subscription {
+    removePost
+  }
+`;
 
 export function Feed() {
-  const { data: userData } = useQuery<GetUserQuery>(User, { fetchPolicy: 'cache-only' });
+  const { user } = useUser();
+  const { isOpen, onClose, onOpen } = useDisclosure();
+
   const { data, loading, error, subscribeToMore, fetchMore } = useQuery<GetPostsQuery>(
     Posts,
     {
@@ -63,15 +70,12 @@ export function Feed() {
       }
     }
   );
-  const { isOpen, onClose, onOpen } = useDisclosure();
 
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
-  const user = userData?.getUser;
-
   const canLoadMore = posts && posts.length < count;
 
-  const loadMore = () => {
+  const getMore = () => {
     fetchMore({
       variables: {
         offset: posts?.length || 0,
@@ -80,12 +84,63 @@ export function Feed() {
     });
   };
 
+  // useSubscription(RemovePost, {
+  //   onSubscriptionData: ({ client, subscriptionData }) => {
+  //     const id = subscriptionData.data.removePost;
+  //     const normalizedId = client.cache.identify({ id, __typename: 'Post' });
+  //     client.cache.evict({ id: normalizedId });
+  //     client.cache.gc();
+  //     client.writeQuery({
+  //       query: Posts,
+  //       data: {
+  //         getPosts: {
+  //           data: posts?.filter(post => post.id !== id),
+  //           count: count - 1
+  //         }
+  //       }
+  //     });
+  //   }
+  // });
+
+  // useSubscription(RemovePost, {
+  //   onSubscriptionData: ({ client, subscriptionData }) => {
+  //     // if we don't have posts, no reason to delete anything
+  //     if (!posts) return;
+
+  //     // the id of the post to remove
+  //     const id = subscriptionData.data.removePost as string;
+
+  //     // find the index of the post in the current data array
+  //     const idx = posts.findIndex(post => post.id === id) || -1;
+
+  //     // if the post is not found (idx is -1), don't do anything. It's probably not loaded
+  //     if (idx < 0) return;
+
+  //     const data = [...posts];
+
+  //     data.splice(idx, 1);
+
+  //     console.log("deleting", id);
+
+  //     client.writeQuery({
+  //       query: Posts,
+  //       data: {
+  //         getPosts: {
+  //           data,
+  //           count: count - 1
+  //         }
+  //       }
+  //     });
+  //   }
+  // });
+
+
   useEffect(() => {
     subscribeToMore({
-      document: NewPost,
+      document: AddPost,
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-ignore how is this type still incorrect apollo, you're trash
-        const post = subscriptionData.data.newPost;
+        const post = subscriptionData.data.addPost;
         return {
           getPosts: {
             data: [post, ...prev.getPosts.data],
@@ -94,10 +149,22 @@ export function Feed() {
         };
       }
     });
-
-    return () => {
-      subscription.unsubscribe();
-    };
+    subscribeToMore({
+      document: RemovePost,
+      updateQuery: (prev, { subscriptionData }) => {
+        // @ts-ignore how is this type still incorrect apollo, you're trash
+        const id = subscriptionData.data.removePost;
+        const normalizedId = client.cache.identify({ id, __typename: 'Post' });
+        client.cache.evict({ id: normalizedId });
+        // client.cache.gc();
+        return {
+          getPosts: {
+            data: prev.getPosts.data?.filter(post => post.id !== id),
+            count: prev.getPosts.count - 1
+          }
+        };
+      }
+    });
   }, []);
 
   return (
@@ -116,11 +183,17 @@ export function Feed() {
       </Flex>
       {error && <Error error={error} />}
       <Stack spacing={4}>
-        {posts?.map((post) => (
-          <Post key={post.id} {...post} />
+        {posts?.map((post, idx) => (
+          <Post key={`${post.id}-${idx}`} {...post} />
         ))}
       </Stack>
-      {canLoadMore && <Waypoint onEnter={loadMore}><Box><Loading /></Box></Waypoint>}
+      {canLoadMore && (
+        <Waypoint onEnter={getMore}>
+          <Box>
+            <Loading />
+          </Box>
+        </Waypoint>)
+      }
       {loading && <Loading />}
       <NewPostModal
         isOpen={isOpen}

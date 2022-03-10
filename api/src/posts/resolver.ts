@@ -28,10 +28,12 @@ export class PostsResolver {
 
   @Mutation(() => Boolean)
   @Authorized()
-  public async deletePost(@Ctx() ctx: Context, @Arg('id') id: string) {
+  public async deletePost(@Ctx() ctx: Context, @Arg('id') id: string, @PubSub() pubSub: PubSubEngine) {
     const token = ctx.em.getReference(Post, id);
 
     await ctx.em.removeAndFlush(token);
+
+    pubSub.publish("delete-post", id);
 
     return true;
   }
@@ -46,13 +48,18 @@ export class PostsResolver {
 
     await em.persistAndFlush(post);
 
-    pubSub.publish("post", post);
+    pubSub.publish("create-post", post);
 
     return post;
   }
 
-  @Subscription(() => Post, { topics: "post" })
-  public newPost(@Root() post: Post): Post {
+  @Subscription(() => Post, { topics: "create-post" })
+  public addPost(@Root() post: Post): Post {
     return post;
+  }
+
+  @Subscription(() => String, { topics: "delete-post" })
+  public removePost(@Root() id: string): string {
+    return id;
   }
 }

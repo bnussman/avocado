@@ -105,7 +105,8 @@ export type QueryGetUserArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  newPost: Post;
+  addPost: Post;
+  removePost: Scalars['String'];
 };
 
 export type Token = {
@@ -171,6 +172,13 @@ export type SignupMutationVariables = Exact<{
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } } };
 
+export type DeletePostMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: boolean };
+
 export type GetPostsQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
@@ -179,10 +187,15 @@ export type GetPostsQueryVariables = Exact<{
 
 export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } }> } };
 
-export type NewPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
+export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewPostSubscription = { __typename?: 'Subscription', newPost: { __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } } };
+export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } } };
+
+export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SubscriptionSubscription = { __typename?: 'Subscription', removePost: string };
 
 export type DeleteTokenMutationVariables = Exact<{
   id: Scalars['String'];
@@ -396,6 +409,37 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const DeletePostDocument = gql`
+    mutation DeletePost($id: String!) {
+  deletePost(id: $id)
+}
+    `;
+export type DeletePostMutationFn = Apollo.MutationFunction<DeletePostMutation, DeletePostMutationVariables>;
+
+/**
+ * __useDeletePostMutation__
+ *
+ * To run a mutation, you first call `useDeletePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePostMutation, { data, loading, error }] = useDeletePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<DeletePostMutation, DeletePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument, options);
+      }
+export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
+export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
+export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
 export const GetPostsDocument = gql`
     query GetPosts($offset: Int, $limit: Int) {
   getPosts(offset: $offset, limit: $limit) {
@@ -441,9 +485,9 @@ export function useGetPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetPostsQueryHookResult = ReturnType<typeof useGetPostsQuery>;
 export type GetPostsLazyQueryHookResult = ReturnType<typeof useGetPostsLazyQuery>;
 export type GetPostsQueryResult = Apollo.QueryResult<GetPostsQuery, GetPostsQueryVariables>;
-export const NewPostDocument = gql`
-    subscription NewPost {
-  newPost {
+export const AddPostDocument = gql`
+    subscription AddPost {
+  addPost {
     id
     body
     user {
@@ -456,26 +500,53 @@ export const NewPostDocument = gql`
     `;
 
 /**
- * __useNewPostSubscription__
+ * __useAddPostSubscription__
  *
- * To run a query within a React component, call `useNewPostSubscription` and pass it any options that fit your needs.
- * When your component renders, `useNewPostSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useAddPostSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useAddPostSubscription` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useNewPostSubscription({
+ * const { data, loading, error } = useAddPostSubscription({
  *   variables: {
  *   },
  * });
  */
-export function useNewPostSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewPostSubscription, NewPostSubscriptionVariables>) {
+export function useAddPostSubscription(baseOptions?: Apollo.SubscriptionHookOptions<AddPostSubscription, AddPostSubscriptionVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useSubscription<NewPostSubscription, NewPostSubscriptionVariables>(NewPostDocument, options);
+        return Apollo.useSubscription<AddPostSubscription, AddPostSubscriptionVariables>(AddPostDocument, options);
       }
-export type NewPostSubscriptionHookResult = ReturnType<typeof useNewPostSubscription>;
-export type NewPostSubscriptionResult = Apollo.SubscriptionResult<NewPostSubscription>;
+export type AddPostSubscriptionHookResult = ReturnType<typeof useAddPostSubscription>;
+export type AddPostSubscriptionResult = Apollo.SubscriptionResult<AddPostSubscription>;
+export const SubscriptionDocument = gql`
+    subscription Subscription {
+  removePost
+}
+    `;
+
+/**
+ * __useSubscriptionSubscription__
+ *
+ * To run a query within a React component, call `useSubscriptionSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubscriptionSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubscriptionSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSubscriptionSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubscriptionSubscription, SubscriptionSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SubscriptionSubscription, SubscriptionSubscriptionVariables>(SubscriptionDocument, options);
+      }
+export type SubscriptionSubscriptionHookResult = ReturnType<typeof useSubscriptionSubscription>;
+export type SubscriptionSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubscription>;
 export const DeleteTokenDocument = gql`
     mutation DeleteToken($id: String!) {
   deleteToken(id: $id)

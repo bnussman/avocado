@@ -25,7 +25,7 @@ async function onSubscribe(
   const bearer = connectionParams?.token as string | undefined;
 
   if (!bearer) {
-    throw new Error("No Authentication Token Provided");
+    return;
   }
 
   const token = await orm.em.fork().findOne(
@@ -36,13 +36,11 @@ async function onSubscribe(
     }
   );
 
-  if (token) {
-    return {
-      contextValue: { user: token.user, token },
-      schema,
-      document: parse(msg.payload.query),
-      variableValues: msg.payload.variables
-    }
+  return {
+    contextValue: { user: token?.user, token },
+    schema,
+    document: parse(msg.payload.query),
+    variableValues: msg.payload.variables
   }
 }
 
