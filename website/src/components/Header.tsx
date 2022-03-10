@@ -71,7 +71,20 @@ export function Header() {
 
   return (
     <>
-      <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
+      <Flex
+        as="header"
+        position="fixed"
+        w="100%"
+        alignItems='center'
+        justifyContent='space-between'
+        bg="white"
+        _dark={{ bg: 'gray.800' }}
+        h={16}
+        px={4}
+        mb={2}
+        zIndex={100}
+        boxShadow="md"
+      >
         <IconButton
           size='md'
           icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
@@ -135,6 +148,9 @@ export function Header() {
           </Stack>
         </Flex>
       </Flex>
+      <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
+      <SignupModal isOpen={isSignupOpen} onClose={onSignupClose} />
+      <Box h={20}></Box>
       {isOpen ? (
         <Box pb={4} pl={4}>
           <Stack as='nav' spacing={4}>
@@ -142,8 +158,6 @@ export function Header() {
           </Stack>
         </Box>
       ) : null}
-      <LoginModal isOpen={isLoginOpen} onClose={onLoginClose} />
-      <SignupModal isOpen={isSignupOpen} onClose={onSignupClose} />
     </>
   );
 }

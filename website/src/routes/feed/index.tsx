@@ -1,7 +1,7 @@
 import { NewPostModal } from '../../components/NewPostModal';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, WarningIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
@@ -17,7 +17,9 @@ import {
   Spacer,
   Box,
   useDisclosure,
-  Stack
+  Stack,
+  Center,
+  Text
 } from '@chakra-ui/react';
 
 const Posts = gql`
@@ -141,6 +143,17 @@ export function Feed() {
         </Button>
       </Flex>
       {error && <Error error={error} />}
+      {posts?.length === 0 && (
+      <Center>
+        <Text
+          bgGradient='linear(to-tr, #7928CA, green.200)'
+          bgClip='text'
+          fontSize='3xl'
+          fontWeight='extrabold'
+        >
+          No Posts
+        </Text>
+      </Center>)}
       <Stack spacing={4}>
         {posts?.map((post, idx) => (
           <Post key={`${post.id}-${idx}`} {...post} />
@@ -148,7 +161,7 @@ export function Feed() {
       </Stack>
       {canLoadMore && (
         <Waypoint onEnter={getMore}>
-          <Box>
+          <Box>``
             <Loading />
           </Box>
         </Waypoint>)

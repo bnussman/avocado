@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Header } from './components/Header';
 import { GetUserQuery } from './generated/graphql';
 import { Feed } from './routes/feed';
-import { Home } from './routes/home';
 import { Sessions } from './routes/sessions';
 import { client } from './utils/apollo';
 

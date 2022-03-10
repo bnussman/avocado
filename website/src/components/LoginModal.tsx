@@ -106,7 +106,7 @@ export function LoginModal({ isOpen, onClose }: Props) {
           <ModalFooter>
             <Button
               type="submit"
-              colorScheme='blue'
+              colorScheme="purple"
               onClick={onClick}
               isDisabled={!username || !password}
               isLoading={loading}
