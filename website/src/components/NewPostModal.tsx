@@ -80,7 +80,7 @@ export function NewPostModal({ isOpen, onClose }: Props) {
           <ModalFooter>
             <Button
               type="submit"
-              colorScheme='blue'
+              colorScheme="purple"
               isLoading={isSubmitting}
             >
               Post
