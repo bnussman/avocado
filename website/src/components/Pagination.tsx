@@ -29,7 +29,7 @@ function PageButton(props: PageButtonProps) {
 
   return (
     <Button onClick={onClick} _hover={isDisabled ? { cursor: 'default' } : undefined} isDisabled={active}>
-      <Text color={active ? "green.400" : undefined}>
+      <Text color={active ? "purple.400" : undefined}>
         {children}
       </Text>
     </Button>
