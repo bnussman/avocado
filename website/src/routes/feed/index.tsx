@@ -105,19 +105,9 @@ export function Feed() {
       updateQuery: (prev, { subscriptionData }) => {
         // @ts-ignore how is this type still incorrect apollo, you're trash
         const id = subscriptionData.data.removePost;
-
         const normalizedId = client.cache.identify({ id, __typename: 'Post' });
-
-        const idx = prev.getPosts.data.findIndex(post => post.id === id);
-
-        if (!id || !normalizedId || idx === -1) return prev;
-
         client.cache.evict({ id: normalizedId });
-
-        const data = [...prev.getPosts.data]
-
-        data.splice(idx, 1);
-
+        // client.cache.gc();
         return {
           getPosts: {
             data: prev.getPosts.data?.filter(post => post.id !== id),
@@ -127,6 +117,8 @@ export function Feed() {
       }
     });
   }, []);
+
+  console.log(posts);
 
   return (
     <Box>
@@ -156,7 +148,7 @@ export function Feed() {
       </Center>)}
       <Stack spacing={4}>
         {posts?.map((post, idx) => (
-          <Post key={`${post.id}-${idx}`} {...post} />
+          <Post key={post.id} {...post} />
         ))}
       </Stack>
       {canLoadMore && (

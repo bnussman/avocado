@@ -73,30 +73,7 @@ const splitLink = split(
   wsLink,
 );
 
-const cache = new InMemoryCache({
-  typePolicies: {
-    Query: {
-      fields: {
-        getPosts: {
-          keyArgs: false,
-          // @ts-expect-error apollo is so bad
-          merge(existing, incoming, { args: { offset = 0 }}) {
-            // Slicing is necessary because the existing data is
-            // immutable, and frozen in development.
-            const merged = existing?.data ? existing.data.slice(0) : [];
-            for (let i = 0; i < incoming.data.length; ++i) {
-              merged[offset + i] = incoming.data[i];
-            }
-            return {
-              ...incoming,
-              data: merged,
-            };
-          },
-        },
-      },
-    },
-  },
-});
+const cache = new InMemoryCache();
 
 export const client = new ApolloClient({
   link: ApolloLink.from([
