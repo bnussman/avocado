@@ -83,6 +83,18 @@ export function Feed() {
         offset: posts?.length || 0,
         limit: MAX_PAGE_SIZE
       },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return prev;
+        }
+
+        return {
+          getPosts: {
+            data: [...prev.getPosts.data, ...fetchMoreResult.getPosts.data],
+            count: fetchMoreResult.getPosts.count
+          }
+        };
+      }
     });
   };
 
@@ -107,7 +119,6 @@ export function Feed() {
         const id = subscriptionData.data.removePost;
         const normalizedId = client.cache.identify({ id, __typename: 'Post' });
         client.cache.evict({ id: normalizedId });
-        // client.cache.gc();
         return {
           getPosts: {
             data: prev.getPosts.data?.filter(post => post.id !== id),
@@ -117,8 +128,6 @@ export function Feed() {
       }
     });
   }, []);
-
-  console.log(posts);
 
   return (
     <Box>
@@ -136,16 +145,12 @@ export function Feed() {
       </Flex>
       {error && <Error error={error} />}
       {posts?.length === 0 && (
-      <Center>
-        <Text
-          bgGradient='linear(to-tr, #7928CA, green.200)'
-          bgClip='text'
-          fontSize='3xl'
-          fontWeight='extrabold'
-        >
-          No Posts
-        </Text>
-      </Center>)}
+        <Center>
+          <Text fontSize='xl' fontWeight='extrabold'>
+            No Posts
+          </Text>
+        </Center>
+      )}
       <Stack spacing={4}>
         {posts?.map((post) => (
           <Post key={post.id} {...post} />
