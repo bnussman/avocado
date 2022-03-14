@@ -153,7 +153,7 @@ export function Feed() {
       </Stack>
       {canLoadMore && (
         <Waypoint onEnter={getMore}>
-          <Box>``
+          <Box>
             <Loading />
           </Box>
         </Waypoint>)
