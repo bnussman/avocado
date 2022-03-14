@@ -1,7 +1,7 @@
 import { NewPostModal } from '../../components/NewPostModal';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { AddIcon, WarningIcon } from '@chakra-ui/icons';
+import { AddIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
@@ -147,7 +147,7 @@ export function Feed() {
         </Text>
       </Center>)}
       <Stack spacing={4}>
-        {posts?.map((post, idx) => (
+        {posts?.map((post) => (
           <Post key={post.id} {...post} />
         ))}
       </Stack>
