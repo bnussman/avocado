@@ -10,6 +10,9 @@ import {
   Observable,
 } from '@apollo/client/core';
 
+const url = import.meta.env.PROD ? 'https://avocado.community/graphql' : 'http://localhost:3001/graphql';
+const wsUrl = import.meta.env.PROD ? 'wss://avocado.community/subscriptions' : 'ws://localhost:3001/subscriptions';
+
 class WebSocketLink extends ApolloLink {
   private client: Client;
 
@@ -34,7 +37,7 @@ class WebSocketLink extends ApolloLink {
 
 const wsLink = new WebSocketLink({
   lazy: false,
-  url: 'ws://localhost:3001/subscriptions',
+  url: wsUrl,
   connectionParams: () => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -44,7 +47,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: url,
 });
 
 const authLink = setContext((_, { headers }) => {
