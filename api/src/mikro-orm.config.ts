@@ -10,5 +10,10 @@ export default {
   clientUrl: DB_URL,
   loadStrategy: LoadStrategy.JOINED,
   debug: !isProduction,
+  driverOptions: {
+    ssl: {
+      ca: process.env.DB_CA
+    }
+  },
   // clientUrl: `mysql://root@db:3306/avocado`,
 } as unknown as Configuration<IDatabaseDriver<Connection>>
