@@ -10,13 +10,13 @@ service:
   internalPort: 3001
 livenessProbe:
   path: "/.well-known/apollo/server-health"
-  initialDelaySeconds: 20
+  initialDelaySeconds: 10
   timeoutSeconds: 5
   scheme: "HTTP"
   probeType: "httpGet"
 readinessProbe:
   path: "/.well-known/apollo/server-health"
-  initialDelaySeconds: 20
-  timeoutSeconds: 15
+  initialDelaySeconds: 10
+  timeoutSeconds: 5
   scheme: "HTTP"
   probeType: "httpGet"
