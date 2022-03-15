@@ -1,13 +1,14 @@
 import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
+import { DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
 
 export default {
   entities: ['./build/entities/*.js'],
   entitiesTs: ['./src/entities/*.ts'],
-  user: 'root',
-  password: 'avocado',
   type: 'mysql',
-  // clientUrl: `mysql://root@db:3306/avocado`,
-  clientUrl: `mysql://root@localhost:3306/avocado`,
+  user: DB_USER,
+  password: DB_PASSWORD,
+  clientUrl: DB_URL,
   loadStrategy: LoadStrategy.JOINED,
-  debug: true,
+  debug: !isProduction,
+  // clientUrl: `mysql://root@db:3306/avocado`,
 } as unknown as Configuration<IDatabaseDriver<Connection>>

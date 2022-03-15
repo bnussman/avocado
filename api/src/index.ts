@@ -1,13 +1,13 @@
 import "reflect-metadata";
-import { createServer } from 'http';
 import express from 'express';
 import config from './mikro-orm.config';
 import Redis from 'ioredis';
+import { createServer } from 'http';
 import { Token } from "./entities/Token";
 import { buildSchema } from "type-graphql";
 import { Connection, IDatabaseDriver, MikroORM } from "@mikro-orm/core";
 import { ApolloServer, ExpressContext } from 'apollo-server-express';
-import { ApolloError, ApolloServerPluginDrainHttpServer, Context } from 'apollo-server-core';
+import { ApolloError, ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { authChecker } from "./utils/auth";
 import { ValidationError } from 'class-validator';
 import { GraphQLError, GraphQLSchema, parse } from 'graphql';
@@ -15,6 +15,7 @@ import { RedisPubSub } from "graphql-redis-subscriptions";
 import { WebSocketServer } from "ws";
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context as WSContext, SubscribeMessage } from "graphql-ws";
+import { REDIS_HOST, REDIS_PASSWORD } from "./utils/constants";
 
 async function onSubscribe(
   { connectionParams }: WSContext<Record<string, unknown> | undefined>,
@@ -86,8 +87,9 @@ async function startApolloServer() {
 
   const orm = await MikroORM.init(config);
 
-  const options = {
-    host: 'localhost',
+  const options: Redis.RedisOptions = {
+    host: REDIS_HOST,
+    password: REDIS_PASSWORD,
     port: 6379,
   };
 
