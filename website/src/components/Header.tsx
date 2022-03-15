@@ -18,7 +18,9 @@ import {
   Image,
   useColorMode,
   Switch,
-  useToast
+  useToast,
+  useMediaQuery,
+  useBreakpointValue
 } from '@chakra-ui/react';
 
 const Logout = gql`
@@ -32,6 +34,7 @@ export function Header() {
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
+  const isMobile = useBreakpointValue({ base: true, md: false })
 
   const toast = useToast();
 
@@ -69,41 +72,52 @@ export function Header() {
     }
   };
 
+  const Icon = () => (
+    <Flex
+      backgroundColor='white'
+      alignItems='center'
+      justifyContent='center'
+      borderRadius='xl'
+      boxShadow="dark-lg"
+      width={10}
+      height={10}
+    >
+      <Image h={8} src={Logo} />
+    </Flex>
+  );
+
   return (
     <>
-       <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
-        <IconButton
-          size='md'
-          icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-          aria-label='Open Menu'
-          display={{ md: !isOpen ? 'none' : 'inherit' }}
-          onClick={isOpen ? onClose : onOpen}
-        />
+      <Flex h={16} alignItems='center' justifyContent='space-between' px={4} mb={2}>
+        {isMobile && (
+          <HStack spacing={4} as={Link} to='/'>
+            <Icon />
+            <IconButton
+              size='md'
+              icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
+              aria-label='Open Menu'
+              onClick={isOpen ? onClose : onOpen}
+            />
+          </HStack>
+        )}
         <HStack spacing={8} alignItems='center'>
           <Box>
             <Flex alignItems='center'>
-              <Flex
-                backgroundColor='white'
-                alignItems='center'
-                justifyContent='center'
-                borderRadius='xl'
-                boxShadow="dark-lg"
-                width={10}
-                height={10}
-              >
-                <Image h={8} src={Logo} />
-              </Flex>
-              <Box
-                ml={3}
-                as={Link}
-                to='/'
-                fontWeight="extrabold"
-                fontSize="2xl"
-                bgGradient='linear(to-r, #59c173, #a17fe0, #5D26C1)'
-                bgClip='text'
-              >
-                Avocado
-              </Box>
+              {!isMobile && (
+                <>
+                  <Icon />
+                  <Box
+                    ml={3}
+                    as={Link}
+                    to='/'
+                    fontWeight="extrabold"
+                    fontSize="2xl"
+                    bgGradient='linear(to-r, #59c173, #a17fe0, #5D26C1)'
+                    bgClip='text'
+                  >
+                    Avocado
+                  </Box>
+                </>)}
             </Flex>
           </Box>
           <HStack
@@ -122,8 +136,8 @@ export function Header() {
             spacing={4}
             alignItems='center'
           >
-            {!user && <Button onClick={onSignupOpen}>Sign Up</Button>}
             {!user && <Button onClick={onLoginOpen}>Login</Button>}
+            {!user && <Button colorScheme="purple" onClick={onSignupOpen}>Sign Up</Button>}
             {user && <Button onClick={onLogout} isLoading={loading}>Logout</Button>}
             <Switch
               isChecked={colorMode === "dark"}
