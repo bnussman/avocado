@@ -1,5 +1,5 @@
 import { Configuration, Connection, IDatabaseDriver, LoadStrategy } from "@mikro-orm/core";
-import { DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
+import { DB_CA, DB_PASSWORD, DB_URL, DB_USER, isProduction } from "./utils/constants";
 
 export default {
   entities: ['./build/entities/*.js'],
@@ -11,8 +11,10 @@ export default {
   loadStrategy: LoadStrategy.JOINED,
   debug: !isProduction,
   driverOptions: {
-    ssl: {
-      ca: process.env.DB_CA
+    connection: {
+      ssl: {
+        ca: DB_CA,
+      }
     }
   },
   // clientUrl: `mysql://root@db:3306/avocado`,
