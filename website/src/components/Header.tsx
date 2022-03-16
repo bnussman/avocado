@@ -3,10 +3,11 @@ import { client } from '../utils/apollo';
 import { SignupModal } from './SignupModal';
 import { User } from '../App';
 import { Link } from "react-router-dom";
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation } from '@apollo/client';
 import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { GetUserQuery, LogoutMutation } from '../generated/graphql';
+import { LogoutMutation } from '../generated/graphql';
 import { LoginModal } from './LoginModal';
+import { useUser } from '../utils/useUser';
 import {
   Box,
   Flex,
@@ -19,7 +20,6 @@ import {
   useColorMode,
   Switch,
   useToast,
-  useMediaQuery,
   useBreakpointValue
 } from '@chakra-ui/react';
 
@@ -30,7 +30,7 @@ const Logout = gql`
 `;
 
 export function Header() {
-  const { data } = useQuery<GetUserQuery>(User, { fetchPolicy: 'cache-only' });
+  const { user } = useUser();
   const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -50,8 +50,6 @@ export function Header() {
     onClose: onLoginClose,
     onOpen: onLoginOpen
   } = useDisclosure();
-
-  const user = data?.getUser;
 
   const onLogout = async () => {
     const { data, errors } = await logout();
