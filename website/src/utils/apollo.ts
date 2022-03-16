@@ -10,8 +10,8 @@ import {
   Observable,
 } from '@apollo/client/core';
 
-const url = import.meta.env.PROD ? 'https://avocado.community/graphql' : 'http://localhost:3001/graphql';
-const wsUrl = import.meta.env.PROD ? 'wss://avocado.community/subscriptions' : 'ws://localhost:3001/subscriptions';
+const url = import.meta.env.PROD ? 'https://api.avocado.community/graphql' : 'http://localhost:3001/graphql';
+const wsUrl = import.meta.env.PROD ? 'wss://api.avocado.community/subscriptions' : 'ws://localhost:3001/subscriptions';
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
