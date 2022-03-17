@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { ApolloProvider, gql } from '@apollo/client';
+import { client } from './utils/apollo';
+import { Feed } from './routes/feed';
+import { NativeBaseProvider } from 'native-base';
+
+const Stack = createNativeStackNavigator();
+
+export const User = gql`
+  query GetUser {
+    getUser {
+      id
+      first
+      last
+      name
+      username
+      email
+    }
+  }
+`;
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+    return (
+        <NativeBaseProvider>
+            <ApolloProvider client={client}>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen name="Feed" component={Feed} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ApolloProvider>
+        </NativeBaseProvider>
+    );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
