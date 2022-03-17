@@ -36,9 +36,9 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
   };
 
   return (
-    <Box borderWidth='1px' borderRadius='lg' p={8}>
-      <Stack space={4}>
-        <HStack>
+    <Box p={4}>
+      <Stack space={2}>
+        <HStack space={2}>
           <Avatar />
           <Box>
             <Text fontWeight="extrabold">{user.name}</Text>

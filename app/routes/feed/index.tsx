@@ -5,7 +5,7 @@ import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { Waypoint } from 'react-waypoint';
 import { client } from '../../utils/apollo';
 import { GetPostsQuery } from '../../src/generated/graphql';
-import { Box, Text, Button, Center, Flex, Heading, Spacer, Spinner, Stack } from 'native-base';
+import { Box, Text, Button, Center, Flex, Heading, Spacer, Spinner, Stack, FlatList } from 'native-base';
 import { useUser } from '../../utils/userUser';
 
 const Posts = gql`
@@ -116,16 +116,6 @@ export function Feed() {
 
   return (
     <Box>
-      <Flex mb={4}>
-        <Heading>Feed</Heading>
-        <Spacer />
-        <Button
-          isDisabled={!user}
-          colorScheme="purple"
-        >
-          New Post
-        </Button>
-      </Flex>
       {posts?.length === 0 && (
         <Center>
           <Text fontSize='xl' fontWeight='extrabold'>
@@ -133,11 +123,13 @@ export function Feed() {
           </Text>
         </Center>
       )}
-      <Stack space={4}>
-        {posts?.map((post) => (
-          <Post key={post.id} {...post} />
-        ))}
-      </Stack>
+      {posts && (
+          <FlatList
+              data={posts}
+              renderItem={({ item: post }) => <Post key={post.id} {...post} />}
+              keyExtractor={(post) => post.id}
+          />
+      )}
       {canLoadMore && (
         <Waypoint onEnter={getMore}>
           <Box>
