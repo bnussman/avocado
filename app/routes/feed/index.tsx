@@ -132,9 +132,9 @@ export function Feed() {
       )}
       {canLoadMore && (
         <Waypoint onEnter={getMore}>
-          <Box>
+          <div>
             <Spinner />
-          </Box>
+          </div>
         </Waypoint>)
       }
       {loading && <Spinner />}
