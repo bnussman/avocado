@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ApolloClient, createHttpLink, InMemoryCache, split } from "@apollo/client";
 import { createClient, ClientOptions, Client } from 'graphql-ws';
 import { setContext } from '@apollo/client/link/context';
@@ -10,8 +11,10 @@ import {
   Observable,
 } from '@apollo/client/core';
 
-const url = __DEV__ ? 'https://api.avocado.community/graphql' : 'http://localhost:3001/graphql';
-const wsUrl = __DEV__  ? 'wss://api.avocado.community/subscriptions' : 'ws://localhost:3001/subscriptions';
+// const url = __DEV__ ? 'http://localhost:3001/graphql' : 'https://api.avocado.community/graphql' ;
+// const wsUrl = __DEV__  ? 'ws://localhost:3001/subscriptions' : 'wss://api.avocado.community/subscriptions';
+const url = 'https://api.avocado.community/graphql';
+const wsUrl = 'wss://api.avocado.community/subscriptions';
 
 class WebSocketLink extends ApolloLink {
   private client: Client;
@@ -38,8 +41,8 @@ class WebSocketLink extends ApolloLink {
 const wsLink = new WebSocketLink({
   lazy: false,
   url: wsUrl,
-  connectionParams: () => {
-    const token = localStorage.getItem('token');
+  connectionParams: async () => {
+    const token = await AsyncStorage.getItem('token');
     if (token) {
       return { token };
     }
@@ -50,8 +53,8 @@ const httpLink = createHttpLink({
   uri: url,
 });
 
-const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('token');
+const authLink = setContext(async (_, { headers }) => {
+  const token = await AsyncStorage.getItem('token');
 
   if (token) {
     return {

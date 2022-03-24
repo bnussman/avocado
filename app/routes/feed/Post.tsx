@@ -1,7 +1,9 @@
+import React from 'react';
 import { ApolloError, gql, useMutation } from '@apollo/client';
 import { DeletePostMutation, GetPostsQuery } from '../../generated/graphql';
 import { Unpacked } from '../../utils/types';
 import { useUser } from '../../utils/userUser';
+import { Entypo } from '@expo/vector-icons'; 
 import {
   Text,
   Avatar,
@@ -10,7 +12,8 @@ import {
   Stack,
   Spacer,
   IconButton,
-  useToast
+  useToast,
+  Flex
 } from 'native-base';
 
 const Delete = gql`
@@ -41,21 +44,26 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
         <HStack space={2}>
           <Avatar />
           <Box>
-            <Text fontWeight="extrabold">{user.name}</Text>
-            <Text fontSize="sm">@{user.username}</Text>
+            <Text>
+              <Text fontWeight="extrabold">{user.name}</Text>{' '}
+              <Text fontSize="sm" color="gray.400">@{user.username}</Text>
+            </Text>
+            <Flex flexDirection="row">
+              <Text flex={1}>
+                {body}
+              </Text>
+            </Flex>
           </Box>
           <Spacer />
           {user.id === me?.id &&
             <IconButton
               aria-label={`Delete post by ${user.name} (${id})`}
               colorScheme="red"
+              icon={<Entypo name="dots-three-horizontal" size={18} color="black" />}
               onPress={onClick}
             />
           }
         </HStack>
-        <Box>
-          {body}
-        </Box>
       </Stack>
     </Box>
   );

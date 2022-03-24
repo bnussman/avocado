@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../generated/graphql";
@@ -42,7 +43,7 @@ export function Login({ isOpen, onClose }: Props) {
     const { data } = await login({ variables: { username, password } });
 
     if (data) {
-      localStorage.setItem('token', data.login.token);
+      await AsyncStorage.setItem('token', data.login.token);
 
       client.writeQuery({
         query: User,

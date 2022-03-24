@@ -2,11 +2,9 @@ import React, { useEffect } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
-import { Waypoint } from 'react-waypoint';
 import { client } from '../../utils/apollo';
 import { GetPostsQuery } from '../../src/generated/graphql';
-import { Box, Text, Button, Center, Flex, Heading, Spacer, Spinner, Stack, FlatList } from 'native-base';
-import { useUser } from '../../utils/userUser';
+import { Box, Text, Center, Spinner, FlatList, Divider } from 'native-base';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -46,23 +44,25 @@ const RemovePost = gql`
 `;
 
 export function Feed() {
-  const { user } = useUser();
-
-  const { data, loading, error, subscribeToMore, fetchMore } = useQuery<GetPostsQuery>(
+  const { data, loading, error, subscribeToMore, fetchMore, refetch } = useQuery<GetPostsQuery>(
     Posts,
     {
       variables: {
         offset: 0,
         limit: MAX_PAGE_SIZE,
-      }
+      },
+      notifyOnNetworkStatusChange: true
     }
   );
 
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
-  const canLoadMore = posts && posts.length < count;
 
   const getMore = () => {
+    const canLoadMore = posts && posts.length < count;
+
+    if (!canLoadMore) return;
+
     fetchMore({
       variables: {
         offset: posts?.length || 0,
@@ -114,30 +114,36 @@ export function Feed() {
     });
   }, []);
 
+  if (error) {
+    return <Box>Some error state</Box>;
+  }
+
+  if (!data && loading) {
+    return <Spinner />
+  }
+
+  if (posts?.length === 0) {
+    return (
+      <Center>
+        <Text>
+          No Posts
+        </Text>
+      </Center>
+    );
+  }
+  
   return (
-    <Box>
-      {posts?.length === 0 && (
-        <Center>
-          <Text fontSize='xl' fontWeight='extrabold'>
-            No Posts
-          </Text>
-        </Center>
-      )}
-      {posts && (
-          <FlatList
-              data={posts}
-              renderItem={({ item: post }) => <Post key={post.id} {...post} />}
-              keyExtractor={(post) => post.id}
-          />
-      )}
-      {canLoadMore && (
-        <Waypoint onEnter={getMore}>
-          <div>
-            <Spinner />
-          </div>
-        </Waypoint>)
-      }
-      {loading && <Spinner />}
+    <Box height="100%" bg="white">
+      <FlatList
+        data={posts}
+        renderItem={({ item: post }) => <Post key={post.id} {...post} />}
+        keyExtractor={(post) => post.id}
+        onEndReachedThreshold={0.7}
+        onEndReached={getMore}
+        ItemSeparatorComponent={Divider}
+        onRefresh={refetch}
+        refreshing={loading}
+      />
     </Box>
   );
 }
