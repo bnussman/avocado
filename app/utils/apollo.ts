@@ -1,9 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ApolloClient, createHttpLink, InMemoryCache, split } from "@apollo/client";
+import { ApolloClient, InMemoryCache, split } from "@apollo/client";
 import { createClient, ClientOptions, Client } from 'graphql-ws';
 import { setContext } from '@apollo/client/link/context';
 import { getMainDefinition } from "@apollo/client/utilities";
 import { print } from 'graphql';
+import { createUploadLink } from 'apollo-upload-client';
 import {
   ApolloLink,
   Operation,
@@ -50,7 +51,7 @@ const wsLink = new WebSocketLink({
   },
 });
 
-const httpLink = createHttpLink({
+const httpLink = createUploadLink({
   uri: url,
 });
 

@@ -9,9 +9,6 @@ import {
   Avatar,
   Box,
   HStack,
-  Stack,
-  Spacer,
-  IconButton,
   useToast,
   Flex,
   Menu,
@@ -59,6 +56,7 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
         <>
           <Box>
             <Menu
+              key={`menu-${id}`}
               w="190"
               trigger={triggerProps => (
                 <Pressable accessibilityLabel="More options menu" {...triggerProps}>
