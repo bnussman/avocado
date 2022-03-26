@@ -4,13 +4,15 @@ import { Error } from "../components/Error";
 import { client } from "../utils/apollo";
 import { User } from "../utils/useUser";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useValidationErrors } from "../utils/useValidationErrors";
 import {
+  Avatar,
   Button,
   FormControl,
   FormErrorMessage,
   FormLabel,
+  HStack,
   Input,
   InputGroup,
   InputRightElement,
@@ -21,6 +23,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spacer,
   Stack
 } from "@chakra-ui/react";
 
@@ -53,10 +56,13 @@ export function SignupModal({ isOpen, onClose }: Props) {
     handleSubmit,
     register,
     reset,
-    formState: { errors, isSubmitting },
-  } = useForm<SignupMutationVariables>();
+    watch,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SignupMutationVariables>({ mode: "onChange" });
 
   const validationErrors = useValidationErrors<SignupMutationVariables>(error);
+
+  const picture = watch("picture");
 
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
@@ -83,6 +89,12 @@ export function SignupModal({ isOpen, onClose }: Props) {
     }
   }, [isOpen]);
 
+  const Image = useMemo(() => (
+    <Avatar size="xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} />
+  ), [picture]);
+
+  console.log(picture);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <form onSubmit={onSubmit}>
@@ -93,48 +105,57 @@ export function SignupModal({ isOpen, onClose }: Props) {
           <ModalBody>
             {error && !validationErrors ? <Error error={error} /> : null}
             <Stack spacing={2}>
-              <FormControl isInvalid={Boolean(errors.picture) || Boolean(validationErrors?.picture)}>
-                <FormLabel htmlFor='picture'>Profile Photo</FormLabel>
-                <Input
-                  id='picture'
-                  type='file'
-                  {...register('picture', {
-                    required: 'This is required',
-                  })}
-                />
-                <FormErrorMessage>
-                  {errors.first && errors.first.message}
-                  {validationErrors?.first && validationErrors?.first[0]}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
-                <FormLabel htmlFor='first'>First name</FormLabel>
-                <Input
-                  id='first'
-                  placeholder='John'
-                  {...register('first', {
-                    required: 'This is required',
-                  })}
-                />
-                <FormErrorMessage>
-                  {errors.first && errors.first.message}
-                  {validationErrors?.first && validationErrors?.first[0]}
-                </FormErrorMessage>
-              </FormControl>
-              <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
-                <FormLabel htmlFor='last'>Last name</FormLabel>
-                <Input
-                  id='last'
-                  placeholder='Doe'
-                  {...register('last', {
-                    required: 'This is required',
-                  })}
-                />
-                <FormErrorMessage>
-                  {errors.last && errors.last.message}
-                  {validationErrors?.last && validationErrors?.last[0]}
-                </FormErrorMessage>
-              </FormControl>
+              <HStack>
+                <Stack spacing={2} w="100%">
+                  <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
+                    <FormLabel htmlFor='first'>First name</FormLabel>
+                    <Input
+                      id='first'
+                      placeholder='John'
+                      {...register('first', {
+                        required: 'This is required',
+                      })}
+                    />
+                    <FormErrorMessage>
+                      {errors.first && errors.first.message}
+                      {validationErrors?.first && validationErrors?.first[0]}
+                    </FormErrorMessage>
+                  </FormControl>
+                  <FormControl isInvalid={Boolean(errors.last) || Boolean(validationErrors?.last)}>
+                    <FormLabel htmlFor='last'>Last name</FormLabel>
+                    <Input
+                      id='last'
+                      placeholder='Doe'
+                      {...register('last', {
+                        required: 'This is required',
+                      })}
+                    />
+                    <FormErrorMessage>
+                      {errors.last && errors.last.message}
+                      {validationErrors?.last && validationErrors?.last[0]}
+                    </FormErrorMessage>
+                  </FormControl>
+                </Stack>
+                <Spacer />
+                <FormControl w="unset" isInvalid={Boolean(errors.picture) || Boolean(validationErrors?.picture)}>
+                  <FormLabel htmlFor='picture'>
+                    {Image}
+                  </FormLabel>
+                  <Input
+                    hidden
+                    variant="unstyled"
+                    id='picture'
+                    type='file'
+                    {...register('picture', {
+                      required: 'This is required',
+                    })}
+                  />
+                  <FormErrorMessage>
+                    {errors.picture && errors.picture.message}
+                    {validationErrors?.picture && validationErrors?.picture[0]}
+                  </FormErrorMessage>
+                </FormControl>
+              </HStack>
               <FormControl isInvalid={Boolean(errors.email) || Boolean(validationErrors?.email)}>
                 <FormLabel htmlFor='email'>Email</FormLabel>
                 <Input
@@ -192,6 +213,7 @@ export function SignupModal({ isOpen, onClose }: Props) {
               type="submit"
               colorScheme="purple"
               isLoading={isSubmitting}
+              isDisabled={!isValid}
             >
               Sign Up
             </Button>
