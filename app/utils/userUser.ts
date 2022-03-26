@@ -10,6 +10,7 @@ export const User = gql`
       name
       username
       email
+      picture
     }
   }
 `;

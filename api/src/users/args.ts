@@ -1,5 +1,6 @@
 import { ArgsType, Field } from "type-graphql";
-import { IsAlpha, IsEmail, MaxLength, MinLength } from "class-validator";
+import { IsAlpha, IsEmail, MinLength } from "class-validator";
+import { GraphQLUpload, Upload } from "graphql-upload";
 
 @ArgsType()
 export class SignUpArgs {
@@ -22,6 +23,9 @@ export class SignUpArgs {
   @Field()
   @MinLength(5)
   password!: string;
+
+  @Field(() => GraphQLUpload)
+  picture!: Upload;
 }
 
 @ArgsType()

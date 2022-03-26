@@ -15,6 +15,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Auth = {
@@ -60,6 +62,7 @@ export type MutationSignupArgs = {
   first: Scalars['String'];
   last: Scalars['String'];
   password: Scalars['String'];
+  picture: Scalars['Upload'];
   username: Scalars['String'];
 };
 
@@ -131,15 +134,11 @@ export type User = {
   last: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
+  picture: Scalars['String'];
   posts: Array<Post>;
   tokens: Array<Token>;
   username: Scalars['String'];
 };
-
-export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } };
 
 export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -152,7 +151,7 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string, picture: string } } };
 
 export type SignupMutationVariables = Exact<{
   first: Scalars['String'];
@@ -160,10 +159,11 @@ export type SignupMutationVariables = Exact<{
   email: Scalars['String'];
   username: Scalars['String'];
   password: Scalars['String'];
+  picture: Scalars['Upload'];
 }>;
 
 
-export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } } };
+export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string, picture: string } } };
 
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['String'];
@@ -178,58 +178,24 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
 
 export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string } } };
+export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
 
 export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type SubscriptionSubscription = { __typename?: 'Subscription', removePost: string };
 
+export type GetUserQueryVariables = Exact<{ [key: string]: never; }>;
 
-export const GetUserDocument = gql`
-    query GetUser {
-  getUser {
-    id
-    first
-    last
-    name
-    username
-    email
-  }
-}
-    `;
 
-/**
- * __useGetUserQuery__
- *
- * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetUserQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetUserQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
-      }
-export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
-        }
-export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
-export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
-export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;
+export type GetUserQuery = { __typename?: 'Query', getUser: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string, picture: string } };
+
+
 export const LogoutDocument = gql`
     mutation Logout {
   logout
@@ -270,6 +236,7 @@ export const LoginDocument = gql`
       name
       username
       email
+      picture
     }
     token
   }
@@ -303,13 +270,14 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const SignupDocument = gql`
-    mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!) {
+    mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!, $picture: Upload!) {
   signup(
     first: $first
     last: $last
     email: $email
     username: $username
     password: $password
+    picture: $picture
   ) {
     user {
       id
@@ -318,6 +286,7 @@ export const SignupDocument = gql`
       name
       username
       email
+      picture
     }
     token
   }
@@ -343,6 +312,7 @@ export type SignupMutationFn = Apollo.MutationFunction<SignupMutation, SignupMut
  *      email: // value for 'email'
  *      username: // value for 'username'
  *      password: // value for 'password'
+ *      picture: // value for 'picture'
  *   },
  * });
  */
@@ -394,6 +364,7 @@ export const GetPostsDocument = gql`
         id
         name
         username
+        picture
       }
     }
     count
@@ -438,6 +409,7 @@ export const AddPostDocument = gql`
       id
       name
       username
+      picture
     }
   }
 }
@@ -491,3 +463,43 @@ export function useSubscriptionSubscription(baseOptions?: Apollo.SubscriptionHoo
       }
 export type SubscriptionSubscriptionHookResult = ReturnType<typeof useSubscriptionSubscription>;
 export type SubscriptionSubscriptionResult = Apollo.SubscriptionResult<SubscriptionSubscription>;
+export const GetUserDocument = gql`
+    query GetUser {
+  getUser {
+    id
+    first
+    last
+    name
+    username
+    email
+    picture
+  }
+}
+    `;
+
+/**
+ * __useGetUserQuery__
+ *
+ * To run a query within a React component, call `useGetUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserQuery(baseOptions?: Apollo.QueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+      }
+export function useGetUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserQuery, GetUserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetUserQuery, GetUserQueryVariables>(GetUserDocument, options);
+        }
+export type GetUserQueryHookResult = ReturnType<typeof useGetUserQuery>;
+export type GetUserLazyQueryHookResult = ReturnType<typeof useGetUserLazyQuery>;
+export type GetUserQueryResult = Apollo.QueryResult<GetUserQuery, GetUserQueryVariables>;

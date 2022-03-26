@@ -37,6 +37,10 @@ export class User {
   @Property()
   password!: string;
 
+  @Field()
+  @Property()
+  picture!: string;
+
   @Field(() => String)
   @Property({ persist: false })
   name(): string {

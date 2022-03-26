@@ -12,9 +12,7 @@ import { useUser } from '../../utils/useUser';
 import { client } from '../../utils/apollo';
 import {
   Flex,
-  Heading,
   Button,
-  Spacer,
   Box,
   useDisclosure,
   Stack,
@@ -32,6 +30,7 @@ const Posts = gql`
           id
           name
           username
+          picture
         }
       }
       count
@@ -48,6 +47,7 @@ const AddPost = gql`
         id
         name
         username
+        picture
       }
     }
   }
@@ -131,18 +131,6 @@ export function Feed() {
 
   return (
     <Box>
-      <Flex mb={4}>
-        <Heading>Feed</Heading>
-        <Spacer />
-        <Button
-          isDisabled={!user}
-          colorScheme="purple"
-          rightIcon={<AddIcon />}
-          onClick={onOpen}
-        >
-          New Post
-        </Button>
-      </Flex>
       {error && <Error error={error} />}
       {posts?.length === 0 && (
         <Center>
@@ -164,10 +152,6 @@ export function Feed() {
         </Waypoint>)
       }
       {loading && <Loading />}
-      <NewPostModal
-        isOpen={isOpen}
-        onClose={onClose}
-      />
     </Box>
   );
 }

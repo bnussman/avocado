@@ -4,8 +4,8 @@ import { SignupMutation, SignupMutationVariables } from "../generated/graphql";
 import { client } from "../utils/apollo";
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from "../utils/useValidationErrors";
-import { User } from "../utils/userUser";
 import { Container } from "../components/Container";
+import { User } from "../utils/userUser";
 import {
   Button,
   FormControl,
@@ -14,8 +14,8 @@ import {
 } from "native-base";
 
 const SIGNUP = gql`
-  mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!) {
-    signup(first: $first, last: $last, email: $email, username: $username, password: $password) {
+  mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!, $picture: Upload!) {
+    signup(first: $first, last: $last, email: $email, username: $username, password: $password, picture: $picture) {
       user {
         id
         first
@@ -23,6 +23,7 @@ const SIGNUP = gql`
         name
         username
         email
+        picture
       }
       token
     }

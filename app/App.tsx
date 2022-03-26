@@ -3,7 +3,7 @@ import React from 'react';
 import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { ApolloProvider, gql, useMutation, useQuery } from '@apollo/client';
 import { client } from './utils/apollo';
-import { Avatar, Text, Box, Flex, NativeBaseProvider, useColorMode, VStack, Switch, Pressable, HStack, Spinner, Icon, Divider, extendTheme } from 'native-base';
+import { Avatar, Text, Box, Flex, NativeBaseProvider, useColorMode, VStack, Switch, Pressable, HStack, Divider, extendTheme } from 'native-base';
 import { Feed } from './routes/feed';
 import { Login } from './routes/Login';
 import { SignUp } from './routes/SignUp';
@@ -46,21 +46,20 @@ const Logout = gql`
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const { user } = useUser();
   const { colorMode, toggleColorMode } = useColorMode();
-  const [logout, { loading }] = useMutation<LogoutMutation>(Logout);
+  const [logout] = useMutation<LogoutMutation>(Logout);
 
   const handleLogout = async () => {
+    props.navigation.navigate("Feed");
+
+    client.writeQuery({
+      query: User,
+      data: {
+        getUser: null,
+      },
+    });
+
     logout().finally(() => {
       AsyncStorage.clear();
-
-      props.navigation.navigate("Feed");
-
-      client.writeQuery({
-        query: User,
-        data: {
-          getUser: null,
-        },
-      });
-
     });
   };
 
@@ -69,10 +68,10 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
       <VStack space={6} my={2} mx={2}>
         {user && (
           <Flex ml={2} direction="row" alignItems="center">
-            <Avatar mr={4} />
+            <Avatar mr={4} source={{ uri: user.picture }} />
             <Box>
-              <Text bold>{user?.name}</Text>
-              <Text fontSize={14} mt={1} fontWeight={500}>
+              <Text fontWeight="extrabold">{user?.name}</Text>
+              <Text fontSize={14} mt={0.5} fontWeight={400}>
                 @{user?.username}
               </Text>
             </Box>
@@ -124,7 +123,6 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
 
 function Navigation() {
   const { data } = useQuery<GetUserQuery>(User, { errorPolicy: 'ignore' });
-  const { colorMode } = useColorMode();
 
   return (
     <Drawer.Navigator

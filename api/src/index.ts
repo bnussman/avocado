@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import "dotenv/config";
 import express from 'express';
 import config from './mikro-orm.config';
 import Redis from 'ioredis';
@@ -13,6 +14,7 @@ import { ValidationError } from 'class-validator';
 import { GraphQLError, GraphQLSchema, parse } from 'graphql';
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { WebSocketServer } from "ws";
+import { graphqlUploadExpress } from "graphql-upload";
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { Context as WSContext, SubscribeMessage } from "graphql-ws";
 import { REDIS_HOST, REDIS_PASSWORD } from "./utils/constants";
@@ -82,6 +84,8 @@ async function getContext(ctx: ExpressContext, orm: MikroORM<IDatabaseDriver<Con
 
 async function startApolloServer() {
   const app = express();
+
+  app.use(graphqlUploadExpress());
 
   const httpServer = createServer(app);
 

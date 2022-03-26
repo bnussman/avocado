@@ -3,10 +3,10 @@ import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { client } from '../../utils/apollo';
-import { GetPostsQuery } from '../../src/generated/graphql';
-import { Box, Text, Center, Spinner, FlatList, Divider, useColorMode } from 'native-base';
+import { Box, Text, Center, Spinner, FlatList, Divider, useColorMode, Flex } from 'native-base';
 import { Container } from '../../components/Container';
-import { Dimensions, RefreshControl, Vibration, View } from 'react-native';
+import { RefreshControl, Vibration } from 'react-native';
+import {GetPostsQuery} from '../../generated/graphql';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -18,6 +18,7 @@ const Posts = gql`
           id
           name
           username
+          picture
         }
       }
       count
@@ -34,6 +35,7 @@ const AddPost = gql`
         id
         name
         username
+        picture
       }
     }
   }
@@ -132,11 +134,16 @@ export function Feed() {
 
   if (posts?.length === 0) {
     return (
-      <Center>
-        <Text>
-          No Posts
-        </Text>
-      </Center>
+      <Container alignItems="center" justifyContent="center">
+        <Flex mt={-16} alignItems="center">
+          <Text fontSize="6xl">
+            🥑
+          </Text>
+          <Text fontSize="xl">
+            No Posts
+          </Text>
+        </Flex>
+      </Container>
     );
   }
 

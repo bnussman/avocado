@@ -3,7 +3,7 @@ import { gql, useMutation } from "@apollo/client";
 import { LoginMutation } from "../generated/graphql";
 import { Error } from "../components/Error";
 import { client } from "../utils/apollo";
-import { User } from "../App";
+import { User } from "../utils/useUser";
 import {
   Button,
   FormControl,

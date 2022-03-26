@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { Tr, Td, IconButton, useToast, Badge } from "@chakra-ui/react";
 import { Tokens } from ".";
-import { User } from "../../App";
+import { User } from "../../utils/useUser";
 import { Hidden } from "../../components/Hidden";
 import { DeleteTokenMutation, GetTokensQuery } from "../../generated/graphql";
 import { client } from "../../utils/apollo";

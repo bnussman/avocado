@@ -9,6 +9,7 @@ import {
   FetchResult,
   Observable,
 } from '@apollo/client/core';
+import {createUploadLink} from "apollo-upload-client";
 
 const url = import.meta.env.PROD ? 'https://api.avocado.community/graphql' : 'http://localhost:3001/graphql';
 const wsUrl = import.meta.env.PROD ? 'wss://api.avocado.community/subscriptions' : 'ws://localhost:3001/subscriptions';
@@ -46,7 +47,7 @@ const wsLink = new WebSocketLink({
   },
 });
 
-const httpLink = createHttpLink({
+const uploadLink = createUploadLink({
   uri: url,
 });
 
@@ -82,7 +83,8 @@ export const client = new ApolloClient({
   link: ApolloLink.from([
     authLink,
     splitLink,
-    httpLink
+    // @ts-ignore
+    uploadLink
   ]),
   cache
 });

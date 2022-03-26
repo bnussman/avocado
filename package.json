@@ -8,6 +8,7 @@
     "dev:api": "pnpm run dev --filter @avocado/api",
     "dev:website": "pnpm run dev --filter @avocado/website",
     "dev:app": "pnpm run start --filter @avocado/app",
+    "codegen": "concurrently -n app,website -c cyan,magenta \"pnpm run codegen --filter @avocado/app\" \"pnpm run codegen --filter @avocado/website\"",
     "clean": "rm -rf node-modules/ && rm -rf api/node-modules/ && rm pnpm-lock.yaml"
   },
   "repository": {

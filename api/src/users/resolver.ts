@@ -5,6 +5,8 @@ import { hash, compare } from "bcrypt";
 import { AuthenticationError } from "apollo-server-core";
 import { Token } from "../entities/Token";
 import { User } from "../entities/User";
+import { FileUpload } from "graphql-upload";
+import { upload } from "../utils/s3";
 
 @ObjectType()
 class Auth {
@@ -26,7 +28,14 @@ export class UserResolver {
 
   @Mutation(() => Auth)
   public async signup(@Ctx() ctx: Context, @Args() args: SignUpArgs): Promise<Auth> {
-    const user = new User(args);
+    const file = await (args.picture as unknown as Promise<FileUpload>);
+
+    const user = new User({ ...args, picture: undefined });
+
+    const picture = await upload(file, user.id);
+
+    user.picture = picture;
+
     const token = new Token(user);
 
     user.password = await hash(args.password, 10);

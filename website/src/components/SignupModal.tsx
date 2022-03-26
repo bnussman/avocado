@@ -2,7 +2,7 @@ import { gql, useMutation } from "@apollo/client";
 import { SignupMutation, SignupMutationVariables } from "../generated/graphql";
 import { Error } from "../components/Error";
 import { client } from "../utils/apollo";
-import { User } from "../App";
+import { User } from "../utils/useUser";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useValidationErrors } from "../utils/useValidationErrors";
@@ -25,8 +25,8 @@ import {
 } from "@chakra-ui/react";
 
 const SignUp = gql`
-  mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!) {
-    signup(first: $first, last: $last, email: $email, username: $username, password: $password) {
+  mutation Signup($first: String!, $last: String!, $email: String!, $username: String!, $password: String!, $picture: Upload!) {
+    signup(first: $first, last: $last, email: $email, username: $username, password: $password, picture: $picture) {
       user {
         id
         first
@@ -34,6 +34,7 @@ const SignUp = gql`
         name
         username
         email
+        picture
       }
       token
     }
@@ -61,7 +62,8 @@ export function SignupModal({ isOpen, onClose }: Props) {
   const handleClick = () => setShow(!show);
 
   const onSubmit = handleSubmit(async (variables) => {
-    const { data } = await signup({ variables });
+    console.log(variables);
+    const { data } = await signup({ variables: { ...variables, picture: variables.picture[0] } });
 
     if (data) {
       localStorage.setItem('token', data.signup.token);
@@ -91,6 +93,20 @@ export function SignupModal({ isOpen, onClose }: Props) {
           <ModalBody>
             {error && !validationErrors ? <Error error={error} /> : null}
             <Stack spacing={2}>
+              <FormControl isInvalid={Boolean(errors.picture) || Boolean(validationErrors?.picture)}>
+                <FormLabel htmlFor='picture'>Profile Photo</FormLabel>
+                <Input
+                  id='picture'
+                  type='file'
+                  {...register('picture', {
+                    required: 'This is required',
+                  })}
+                />
+                <FormErrorMessage>
+                  {errors.first && errors.first.message}
+                  {validationErrors?.first && validationErrors?.first[0]}
+                </FormErrorMessage>
+              </FormControl>
               <FormControl isInvalid={Boolean(errors.first) || Boolean(validationErrors?.first)}>
                 <FormLabel htmlFor='first'>First name</FormLabel>
                 <Input

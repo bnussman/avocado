@@ -23,6 +23,7 @@ const LOGIN = gql`
         name
         username
         email
+        picture
       }
       token
     }

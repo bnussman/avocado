@@ -40,7 +40,7 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
     <Box borderWidth='1px' borderRadius='lg' p={8}>
       <Stack spacing={4}>
         <HStack>
-          <Avatar />
+          <Avatar src={user.picture}/>
           <Box>
             <Text fontWeight="extrabold">{user.name}</Text>
             <Text fontSize="sm">@{user.username}</Text>

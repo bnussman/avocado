@@ -11,10 +11,10 @@ import {
   Observable,
 } from '@apollo/client/core';
 
-// const url = __DEV__ ? 'http://localhost:3001/graphql' : 'https://api.avocado.community/graphql' ;
-// const wsUrl = __DEV__  ? 'ws://localhost:3001/subscriptions' : 'wss://api.avocado.community/subscriptions';
-const url = 'https://api.avocado.community/graphql';
-const wsUrl = 'wss://api.avocado.community/subscriptions';
+const url = __DEV__ ? 'http://192.168.1.56:3001/graphql' : 'https://api.avocado.community/graphql' ;
+const wsUrl = __DEV__  ? 'ws://192.168.1.56:3001/subscriptions' : 'wss://api.avocado.community/subscriptions';
+// const url = 'https://api.avocado.community/graphql';
+// const wsUrl = 'wss://api.avocado.community/subscriptions';
 
 class WebSocketLink extends ApolloLink {
   private client: Client;

@@ -13,7 +13,9 @@ import {
   Spacer,
   IconButton,
   useToast,
-  Flex
+  Flex,
+  Menu,
+  Pressable
 } from 'native-base';
 
 const Delete = gql`
@@ -40,31 +42,38 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
 
   return (
     <Box p={4}>
-      <Stack space={2}>
-        <HStack space={2}>
-          <Avatar />
-          <Box>
-            <Text>
-              <Text fontWeight="extrabold">{user.name}</Text>{' '}
-              <Text fontSize="sm" color="gray.400">@{user.username}</Text>
+      <HStack space={2}>
+        <Avatar key={user.id} source={{ uri: user.picture }}/>
+        <Box flexGrow={1}>
+          <Text>
+            <Text fontWeight="extrabold">{user.name}</Text>{' '}
+            <Text fontSize="sm" color="gray.400">@{user.username}</Text>
+          </Text>
+          <Flex flexDirection="row" flexGrow={1}>
+            <Text flex={1}>
+              {body}
             </Text>
-            <Flex flexDirection="row">
-              <Text flex={1}>
-                {body}
-              </Text>
-            </Flex>
+          </Flex>
+        </Box>
+        {user.id === me?.id &&
+        <>
+          <Box>
+            <Menu
+              w="190"
+              trigger={triggerProps => (
+                <Pressable accessibilityLabel="More options menu" {...triggerProps}>
+                  <Entypo color="#949494" name="dots-three-horizontal" size={19} />
+                </Pressable>
+              )}
+            >
+              <Menu.Item _text={{ color: "red.400" }} onPress={onClick}>
+                {loading ? "Deleteing" : "Delete"}
+              </Menu.Item>
+            </Menu>
           </Box>
-          <Spacer />
-          {user.id === me?.id &&
-            <IconButton
-              p={1}
-              onPress={onClick}
-              icon={<Entypo color="#949494" name="dots-three-horizontal" size={16} />}
-              _pressed={{ bg: "transparent" }}
-            />
-          }
-        </HStack>
-      </Stack>
+        </>
+        }
+      </HStack>
     </Box>
   );
 }
