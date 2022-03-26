@@ -42,8 +42,9 @@ const wsLink = new WebSocketLink({
   lazy: false,
   url: wsUrl,
   connectionParams: async () => {
-    const token = await AsyncStorage.getItem('token');
-    if (token) {
+    const data = await AsyncStorage.getItem('token');
+    if (data) {
+      const { token } = JSON.parse(data);
       return { token };
     }
   },
@@ -54,9 +55,10 @@ const httpLink = createHttpLink({
 });
 
 const authLink = setContext(async (_, { headers }) => {
-  const token = await AsyncStorage.getItem('token');
+  const data = await AsyncStorage.getItem('token');
 
-  if (token) {
+  if (data) {
+    const { token } = JSON.parse(data);
     return {
       headers: {
         ...headers,

@@ -4,7 +4,9 @@ import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { client } from '../../utils/apollo';
 import { GetPostsQuery } from '../../src/generated/graphql';
-import { Box, Text, Center, Spinner, FlatList, Divider } from 'native-base';
+import { Box, Text, Center, Spinner, FlatList, Divider, useColorMode } from 'native-base';
+import { Container } from '../../components/Container';
+import { Dimensions, RefreshControl, Vibration, View } from 'react-native';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -44,6 +46,7 @@ const RemovePost = gql`
 `;
 
 export function Feed() {
+  const { colorMode } = useColorMode();
   const { data, loading, error, subscribeToMore, fetchMore, refetch } = useQuery<GetPostsQuery>(
     Posts,
     {
@@ -87,6 +90,7 @@ export function Feed() {
     subscribeToMore({
       document: AddPost,
       updateQuery: (prev, { subscriptionData }) => {
+        Vibration.vibrate(1000);
         // @ts-ignore how is this type still incorrect apollo, you're trash
         const post = subscriptionData.data.addPost;
         return {
@@ -119,7 +123,11 @@ export function Feed() {
   }
 
   if (!data && loading) {
-    return <Spinner />
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Spinner color="gray.400" size="lg" />
+      </Container>
+    );
   }
 
   if (posts?.length === 0) {
@@ -131,19 +139,24 @@ export function Feed() {
       </Center>
     );
   }
-  
+
   return (
-    <Box height="100%" bg="white">
+    <Container>
       <FlatList
         data={posts}
         renderItem={({ item: post }) => <Post key={post.id} {...post} />}
         keyExtractor={(post) => post.id}
-        onEndReachedThreshold={0.7}
         onEndReached={getMore}
+        onEndReachedThreshold={0.1}
         ItemSeparatorComponent={Divider}
-        onRefresh={refetch}
-        refreshing={loading}
+        refreshControl={
+          <RefreshControl
+            tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
+            refreshing={Boolean(data) && loading}
+            onRefresh={refetch}
+          />
+        }
       />
-    </Box>
+    </Container>
   );
 }

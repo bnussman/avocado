@@ -31,10 +31,10 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
   const onClick = () => {
     deletePost({ variables: { id } })
       .then(() => {
-        toast.show({ status: 'success', description: 'Successfully deleted post' })
+        toast.show({ status: 'success', title: 'Successfully deleted post' })
       })
       .catch((error: ApolloError) => {
-        toast.show({ status: 'error', description: error.message })
+        toast.show({ status: 'error', title: error.message })
     });
   };
 
@@ -57,10 +57,10 @@ export function Post({ body, user, id }: Unpacked<GetPostsQuery['getPosts']['dat
           <Spacer />
           {user.id === me?.id &&
             <IconButton
-              aria-label={`Delete post by ${user.name} (${id})`}
-              colorScheme="red"
-              icon={<Entypo name="dots-three-horizontal" size={18} color="black" />}
+              p={1}
               onPress={onClick}
+              icon={<Entypo color="#949494" name="dots-three-horizontal" size={16} />}
+              _pressed={{ bg: "transparent" }}
             />
           }
         </HStack>

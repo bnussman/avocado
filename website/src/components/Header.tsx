@@ -123,7 +123,7 @@ export function Header() {
             spacing={2}
             display={{ base: 'none', md: 'flex' }}
           >
-            <Button as={Link} variant="ghost" to='/sessions'>Sessions</Button>
+            {/* <Button as={Link} variant="ghost" to='/sessions'>Sessions</Button>*/}
           </HStack>
         </HStack>
         <Flex alignItems='center'>
