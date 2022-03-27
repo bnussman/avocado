@@ -90,7 +90,7 @@ export function SignupModal({ isOpen, onClose }: Props) {
   }, [isOpen]);
 
   const Image = useMemo(() => (
-    <Avatar size="xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} />
+    <Avatar size="xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
   ), [picture]);
 
   console.log(picture);
