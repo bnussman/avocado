@@ -91,7 +91,9 @@ importers:
       '@types/react-native': ~0.64.12
       apollo-upload-client: ^16.0.0
       expo: ~44.0.0
+      expo-image-picker: ~12.0.1
       expo-status-bar: ~1.2.0
+      expo-updates: ~0.11.6
       graphql: 15.6.1
       graphql-ws: 5.5.5
       native-base: ^3.3.7
@@ -101,6 +103,7 @@ importers:
       react-native: 0.64.3
       react-native-gesture-handler: ~2.1.0
       react-native-keyboard-aware-scroll-view: ^0.9.5
+      react-native-mime-types: ^2.3.0
       react-native-reanimated: ~2.3.1
       react-native-safe-area-context: 3.3.2
       react-native-screens: ~3.10.1
@@ -115,7 +118,9 @@ importers:
       '@react-navigation/native-stack': 6.5.2_e26cace8871f37c4026776d27613cbcb
       apollo-upload-client: 16.0.0_190bd571018ec7539347db1975a21dac
       expo: 44.0.6_@babel+core@7.17.2
+      expo-image-picker: 12.0.2_expo@44.0.6
       expo-status-bar: 1.2.0
+      expo-updates: 0.11.6_expo@44.0.6
       graphql: 15.6.1
       graphql-ws: 5.5.5_graphql@15.6.1
       native-base: 3.3.7_a82044ecf929b82ddabeaecfa87e2d44
@@ -125,6 +130,7 @@ importers:
       react-native: 0.64.3_react@17.0.1
       react-native-gesture-handler: 2.1.3
       react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.64.3
+      react-native-mime-types: 2.3.0
       react-native-reanimated: 2.3.3_3b1f30c0d83e1553e79701a2fdfc77c6
       react-native-safe-area-context: 3.3.2_react-native@0.64.3+react@17.0.1
       react-native-screens: 3.10.2_react-native@0.64.3+react@17.0.1
@@ -7937,12 +7943,34 @@ packages:
       fontfaceobserver: 2.1.0
     dev: false
 
+  /expo-image-picker/12.0.2_expo@44.0.6:
+    resolution: {integrity: sha512-rAoNGtofV5cg3UN+cdIGDVfbMvbutBX6uNV7jCIEw/WZxZlbW+R7HC8l5lGDFtoLVqcpkHE/6JpAXvESxVSAOA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config-plugins': 4.0.18
+      expo: 44.0.6_@babel+core@7.17.2
+      uuid: 7.0.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /expo-json-utils/0.2.1:
+    resolution: {integrity: sha512-wU7gXGtaUlyxFLTp5e3PbnJB90/92r6gEc2BuMHdqE0OxhTQKyKzRszk2szCsdkeI7L4XntvZhCs1Px+gL1gvA==}
+    dev: false
+
   /expo-keep-awake/10.0.2_expo@44.0.6:
     resolution: {integrity: sha512-Ro1lgyKldbFs4mxhWM+goX9sg0S2SRR8FiJJeOvaRzf8xNhrZfWA00Zpr+/3ocCoWQ3eEL+X9UF4PXXHf0KoOg==}
     peerDependencies:
       expo: '*'
     dependencies:
       expo: 44.0.6_@babel+core@7.17.2
+    dev: false
+
+  /expo-manifests/0.2.4:
+    resolution: {integrity: sha512-8PrMPyvElKXflYd1ApDHJR9JF0SR996iVEVQgHAMLzVP7OqEAM6dQaFeqrRqVn/DSsxEWkJTpxv8WJ5NWrT4Lg==}
+    dependencies:
+      expo-json-utils: 0.2.1
     dev: false
 
   /expo-modules-autolinking/0.5.5:
@@ -7965,6 +7993,37 @@ packages:
 
   /expo-status-bar/1.2.0:
     resolution: {integrity: sha512-pVZZ/kDCXFK79E4dCtRecs3XLC8aiwlciutSd/fFmUPJSQZ1Txia6hlKajPt0GAYft8/YnT0V3URXzWZOBniYQ==}
+    dev: false
+
+  /expo-structured-headers/2.1.1:
+    resolution: {integrity: sha512-0up4sfHHsiK2YLpTwD/ssUD2oeSGzVUeARnu/itKAJO4zHqjpc+m8N1s7HPSJcdC7fdDpMjzcdrDasT0o+cOAw==}
+    dev: false
+
+  /expo-updates-interface/0.5.1_expo@44.0.6:
+    resolution: {integrity: sha512-RLvC69o1BkhHP6hNaWiIvSiTgXABB9v4HnoietoXKFHlAyxlQCupy6ki164KpZNrOS/PFJ2WWqZOvKfiyDVO+w==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 44.0.6_@babel+core@7.17.2
+    dev: false
+
+  /expo-updates/0.11.6_expo@44.0.6:
+    resolution: {integrity: sha512-nTzEc/z0/QHwu6gJhYSh5TWDSzNLO9bmtP4aQzStfqT8RRoh1bYRomszxjc7e3CsZT8xrG88XKlZ4iKL6zHLoQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      '@expo/config': 6.0.18
+      '@expo/config-plugins': 4.0.18
+      '@expo/metro-config': 0.2.8
+      expo: 44.0.6_@babel+core@7.17.2
+      expo-manifests: 0.2.4
+      expo-structured-headers: 2.1.1
+      expo-updates-interface: 0.5.1_expo@44.0.6
+      fbemitter: 2.1.1
+      resolve-from: 5.0.0
+      uuid: 3.4.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /expo/44.0.6_@babel+core@7.17.2:
@@ -10482,6 +10541,11 @@ packages:
     resolution: {integrity: sha512-uEZPmlWEmzCTYKGQfOukR/LtHJc9JxeP8d4nLZJh4ucuQueaJ7QK1Eo0KLC69SoB9xIV+HdlrFMzh31mtfUJTQ==}
     engines: {node: '>= 14.0.0'}
 
+  /mime-db/1.37.0:
+    resolution: {integrity: sha512-R3C4db6bgQhlIhPU48fUtdVmKnflq+hRdad7IyKhtFj06VPNVdk2RhiYL3UjQIlso8L+YxAtFkobT0VK+S/ybg==}
+    engines: {node: '>= 0.6'}
+    dev: false
+
   /mime-db/1.51.0:
     resolution: {integrity: sha512-5y8A56jg7XVQx2mbv1lu49NR4dokRnhZYTtL+KGfaa27uq4pSTXkwQkFJl4pkRMyNFz/EtYDSkiiEHx3F7UN6g==}
     engines: {node: '>= 0.6'}
@@ -11498,6 +11562,13 @@ packages:
       prop-types: 15.8.1
       react-native: 0.64.3_react@17.0.1
       react-native-iphone-x-helper: 1.3.1_react-native@0.64.3
+    dev: false
+
+  /react-native-mime-types/2.3.0:
+    resolution: {integrity: sha512-9l/kkT1QM0i0xAKkOADkP6jIMhqiS+R/eSKBS/lsUmuMYMqboClyrwTFFZwUcaVIN0SpeH4wOKhYTqCnFgRsEw==}
+    engines: {node: '>= 0.6'}
+    dependencies:
+      mime-db: 1.37.0
     dev: false
 
   /react-native-reanimated/2.3.3_3b1f30c0d83e1553e79701a2fdfc77c6:
@@ -13217,6 +13288,11 @@ packages:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
     hasBin: true
+
+  /uuid/7.0.2:
+    resolution: {integrity: sha512-vy9V/+pKG+5ZTYKf+VcphF5Oc6EFiu3W8Nv3P3zIh0EqVI80ZxOzuPfe9EHjkFNvf8+xuTHVeei4Drydlx4zjw==}
+    hasBin: true
+    dev: false
 
   /uuid/7.0.3:
     resolution: {integrity: sha512-DPSke0pXhTZgoF/d+WSt2QaKMCFSfx7QegxEWT+JOuHF5aWrKEn0G+ztjuJg/gG8/ItK+rbPCD/yNv8yyih6Cg==}
