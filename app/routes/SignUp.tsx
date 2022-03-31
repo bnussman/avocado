@@ -14,6 +14,7 @@ import { useState } from "react";
 import { isMobile } from "../utils/constants";
 import { ReactNativeFile } from "apollo-upload-client";
 import { TouchableOpacity } from "react-native";
+// @ts-expect-error yeah
 import Profile from "../assets/profile.png";
 import {
   Button,
@@ -54,7 +55,7 @@ export function generateRNFile(uri: string, name: string) {
 
 let picture: Scalars["Upload"];
 
-export function SignUp() {
+export function SignUp(props: any) {
   const [signup, { loading, error }] = useMutation<SignupMutation>(SIGNUP);
 
   const [photo, setPhoto] = useState<any>();
@@ -62,10 +63,10 @@ export function SignUp() {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting },
   } = useForm<SignupMutationVariables>({ mode: "onChange" });
 
-    const chooseProfilePhoto = async () => {
+  const chooseProfilePhoto = async () => {
     setPhoto(undefined);
     picture = null;
 
@@ -101,7 +102,9 @@ export function SignUp() {
 
   const onSubmit = handleSubmit(async (variables) => {
     signup({ variables: { ...variables, picture: picture } }).then(async ({ data }) => {
-      await AsyncStorage.setItem('token', JSON.stringify({ token: data?.signup.token }));
+      props.navigation.toggleDrawer();
+
+      AsyncStorage.setItem('token', JSON.stringify({ token: data?.signup.token }));
 
       client.writeQuery({
         query: User,

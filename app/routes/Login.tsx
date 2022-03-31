@@ -10,7 +10,6 @@ import {
   FormControl,
   Input,
   Stack,
-  Text
 } from "native-base";
 
 const LOGIN = gql`
@@ -30,28 +29,29 @@ const LOGIN = gql`
   }
 `;
 
-export function Login() {
-  const [login, { loading, error }] = useMutation<LoginMutation>(LOGIN);
+export function Login(props: any) {
+  const [login, { loading }] = useMutation<LoginMutation>(LOGIN);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
   const onClick = async () => {
-    const { data } = await login({ variables: { username, password } });
+    login({ variables: { username, password } })
+      .then(async ({ data }) => {
+        props.navigation.toggleDrawer();
 
-    if (data) {
-      await AsyncStorage.setItem('token', JSON.stringify({ token: data.login.token }));
+        AsyncStorage.setItem('token', JSON.stringify({ token: data?.login.token }));
 
-      client.writeQuery({
-        query: User,
-        data: { getUser: { ...data?.login.user } }
-      });
-    }
+        client.writeQuery({
+          query: User,
+          data: { getUser: { ...data?.login.user } }
+        });
+      })
+      .catch((error) => alert(error.message));
   };
 
   return (
     <Container keyboard>
       <Stack space={4} p={4} w="100%">
-        {error && <Text>test</Text>}
         <FormControl>
           <FormControl.Label htmlFor='username'>Username or Email</FormControl.Label>
           <Input

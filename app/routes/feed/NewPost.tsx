@@ -29,16 +29,18 @@ export function NewPost(props: any) {
 
   const [text, setText] = useState("");
 
-  const onSubmit = async () => {
-    const { data, errors } = await post({ variables: { body: text } });
-
-    if (data) {
-      props.navigation.navigate("Feed");
-    }
-
-    if (errors) {
-      alert(errors[0].message);
-    }
+  const onSubmit = () => {
+    post({
+      variables: {
+        body: text
+      }
+    })
+      .then((data) => {
+        props.navigation.navigate("Feed");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
   };
 
   return (

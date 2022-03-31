@@ -3,11 +3,12 @@ import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { client } from '../../utils/apollo';
-import { Box, Text, Spinner, FlatList, Divider, useColorMode, Flex, Fab, Icon } from 'native-base';
+import { Box, Text, Spinner, FlatList, Divider, useColorMode, Flex, Fab, Icon, Center } from 'native-base';
 import { Container } from '../../components/Container';
 import { RefreshControl, Vibration } from 'react-native';
 import { GetPostsQuery } from '../../generated/graphql';
 import { AntDesign } from '@expo/vector-icons'; 
+import { useUser } from '../../utils/userUser';
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -49,6 +50,7 @@ const RemovePost = gql`
 `;
 
 export function Feed(props: any) {
+  const { user } = useUser();
   const { colorMode } = useColorMode();
   const { data, loading, error, subscribeToMore, fetchMore, refetch } = useQuery<GetPostsQuery>(
     Posts,
@@ -61,13 +63,14 @@ export function Feed(props: any) {
     }
   );
 
+  const isRefreshing = Boolean(data) && loading;
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
 
   const getMore = () => {
     const canLoadMore = posts && posts.length < count;
 
-    if (!canLoadMore) return;
+    if (!canLoadMore || isRefreshing) return;
 
     fetchMore({
       variables: {
@@ -121,6 +124,17 @@ export function Feed(props: any) {
     });
   }, []);
 
+
+  const renderFooter = () => {
+    if (!isRefreshing) return null;
+
+    return (
+      <Center>
+        <Spinner mt={4} mb={9} color="gray.400" />
+      </Center>
+    );
+  };
+
   if (error) {
     return <Box>Some error state</Box>;
   }
@@ -160,12 +174,13 @@ export function Feed(props: any) {
         refreshControl={
           <RefreshControl
             tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
-            refreshing={Boolean(data) && loading}
+            refreshing={isRefreshing}
             onRefresh={refetch}
           />
         }
+        ListFooterComponent={renderFooter()}
       />
-      <Fab onPress={() => props.navigation.navigate("New Post")} right={10} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
+      <Fab isDisabled={!user} onPress={() => props.navigation.navigate("New Post")} right={8} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
     </Container>
   );
 }
