@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { client } from '../../utils/apollo';
-import { Box, Text, Center, Spinner, FlatList, Divider, useColorMode, Flex } from 'native-base';
+import { Box, Text, Spinner, FlatList, Divider, useColorMode, Flex, Fab, Icon } from 'native-base';
 import { Container } from '../../components/Container';
 import { RefreshControl, Vibration } from 'react-native';
-import {GetPostsQuery} from '../../generated/graphql';
+import { GetPostsQuery } from '../../generated/graphql';
+import { AntDesign } from '@expo/vector-icons'; 
 
 const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
@@ -47,7 +48,7 @@ const RemovePost = gql`
   }
 `;
 
-export function Feed() {
+export function Feed(props: any) {
   const { colorMode } = useColorMode();
   const { data, loading, error, subscribeToMore, fetchMore, refetch } = useQuery<GetPostsQuery>(
     Posts,
@@ -164,6 +165,7 @@ export function Feed() {
           />
         }
       />
+      <Fab zIndex={2} onPress={() => props.navigation.navigate("New Post")} right={10} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
     </Container>
   );
 }

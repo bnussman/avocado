@@ -86,6 +86,7 @@ importers:
       '@react-navigation/drawer': ^6.3.1
       '@react-navigation/native': ^6.0.8
       '@react-navigation/native-stack': ^6.5.0
+      '@react-navigation/stack': ^6.1.1
       '@types/apollo-upload-client': ^14.1.0
       '@types/react': ~17.0.21
       '@types/react-native': ~0.64.12
@@ -116,6 +117,7 @@ importers:
       '@react-navigation/drawer': 6.3.1_b937daadedfc98f6e04ec690e1df31ac
       '@react-navigation/native': 6.0.8_react-native@0.64.3+react@17.0.1
       '@react-navigation/native-stack': 6.5.2_e26cace8871f37c4026776d27613cbcb
+      '@react-navigation/stack': 6.1.1_6e58a674b4a58bd2937756beaaf48e0e
       apollo-upload-client: 16.0.0_190bd571018ec7539347db1975a21dac
       expo: 44.0.6_@babel+core@7.17.2
       expo-image-picker: 12.0.2_expo@44.0.6
@@ -5031,6 +5033,27 @@ packages:
     resolution: {integrity: sha512-8xJL+djIzpFdRW/sGlKojQ06fWgFk1c5jER9501HYJ12LF5DIJFr/tqBI2TJ6bk+y+QFu0nbNyeRC80OjRlmkA==}
     dependencies:
       nanoid: 3.2.0
+    dev: false
+
+  /@react-navigation/stack/6.1.1_6e58a674b4a58bd2937756beaaf48e0e:
+    resolution: {integrity: sha512-mr7CrP3rvYapTZj/xUInJYDte2QEQPvK8qBI6kbJ6goeLqRMkcO7haK4Q5FeV1HVYCUnssAn7CA5j+OOm59syg==}
+    peerDependencies:
+      '@react-navigation/native': ^6.0.0
+      react: '*'
+      react-native: '*'
+      react-native-gesture-handler: '>= 1.0.0'
+      react-native-safe-area-context: '>= 3.0.0'
+      react-native-screens: '>= 3.0.0'
+    dependencies:
+      '@react-navigation/elements': 1.3.1_a16ec4d76c3a598401bd5ccb7396cd9a
+      '@react-navigation/native': 6.0.8_react-native@0.64.3+react@17.0.1
+      color: 3.2.1
+      react: 17.0.1
+      react-native: 0.64.3_react@17.0.1
+      react-native-gesture-handler: 2.1.3
+      react-native-safe-area-context: 3.3.2_react-native@0.64.3+react@17.0.1
+      react-native-screens: 3.10.2_react-native@0.64.3+react@17.0.1
+      warn-once: 0.1.0
     dev: false
 
   /@react-stately/checkbox/3.0.6_react@17.0.1:
