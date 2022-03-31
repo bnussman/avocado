@@ -1,3 +1,4 @@
+import { CreatePostMutation, CreatePostMutationVariables } from "../generated/graphql";
 import { gql, useMutation } from "@apollo/client";
 import { useForm } from "react-hook-form";
 import { useValidationErrors } from "../utils/useValidationErrors";
@@ -15,7 +16,6 @@ import {
   ModalFooter,
   Textarea
 } from "@chakra-ui/react";
-import { CreatePostMutation, CreatePostMutationVariables } from "../generated/graphql";
 
 const Post = gql`
   mutation CreatePost($body: String!) {

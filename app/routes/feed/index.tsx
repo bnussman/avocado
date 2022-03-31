@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
@@ -165,7 +165,7 @@ export function Feed(props: any) {
           />
         }
       />
-      <Fab zIndex={2} onPress={() => props.navigation.navigate("New Post")} right={10} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
+      <Fab onPress={() => props.navigation.navigate("New Post")} right={10} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
     </Container>
   );
 }
