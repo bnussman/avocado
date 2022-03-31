@@ -171,6 +171,7 @@ export function Feed(props: any) {
         onEndReached={getMore}
         onEndReachedThreshold={0.1}
         ItemSeparatorComponent={Divider}
+        ListFooterComponent={renderFooter()}
         refreshControl={
           <RefreshControl
             tintColor={colorMode === "dark" ? "#cfcfcf" : undefined}
@@ -178,7 +179,6 @@ export function Feed(props: any) {
             onRefresh={refetch}
           />
         }
-        ListFooterComponent={renderFooter()}
       />
       <Fab isDisabled={!user} onPress={() => props.navigation.navigate("New Post")} right={8} bottom={10} shadow={2} size="sm" icon={<Icon color="white" as={AntDesign} name="plus" size="sm" />} />
     </Container>
