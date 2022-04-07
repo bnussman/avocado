@@ -42,8 +42,10 @@ class WebSocketLink extends ApolloLink {
 }
 
 const wsLink = new WebSocketLink({
-  lazy: false,
   url: wsUrl,
+  lazy: false,
+  retryAttempts: Infinity,
+  isFatalConnectionProblem: () => false,
   connectionParams: async () => {
     const data = await AsyncStorage.getItem('token');
     if (data) {
