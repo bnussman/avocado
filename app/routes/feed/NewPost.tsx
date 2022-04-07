@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
+import { getPrintableValidationError } from "../../utils/useValidationErrors";
 import { CreatePostMutation } from "../../generated/graphql";
 import { gql, useMutation } from "@apollo/client";
 import { AntDesign } from '@expo/vector-icons';
@@ -35,11 +36,11 @@ export function NewPost(props: any) {
         body: text
       }
     })
-      .then((data) => {
+      .then(() => {
         props.navigation.navigate("Feed");
       })
       .catch((error) => {
-        alert(error.message);
+        alert(getPrintableValidationError(error));
       });
   };
 

@@ -17,3 +17,13 @@ export function isValidationError(error: ApolloError | undefined) {
 
   return error.message.startsWith("Validation");
 }
+
+export function getPrintableValidationError(error: ApolloError) {
+  if (isValidationError(error)) {
+    const errors = error?.graphQLErrors[0]?.extensions as Record<string, string[]>[];
+    // @ts-expect-error i hate this
+    return Object.keys(errors).map(key => errors[key].join('\n')).join('\n');
+  }
+
+  return error.message;
+}

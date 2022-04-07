@@ -3,7 +3,7 @@ import { gql, useQuery } from '@apollo/client';
 import { Post } from './Post';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { client } from '../../utils/apollo';
-import { Box, Text, Spinner, FlatList, Divider, useColorMode, Flex, Fab, Icon, Center } from 'native-base';
+import { Text, Spinner, FlatList, Divider, useColorMode, Flex, Fab, Icon, Center, Heading } from 'native-base';
 import { Container } from '../../components/Container';
 import { RefreshControl, Vibration } from 'react-native';
 import { GetPostsQuery } from '../../generated/graphql';
@@ -136,7 +136,12 @@ export function Feed(props: any) {
   };
 
   if (error) {
-    return <Box>Some error state</Box>;
+    return (
+      <Container alignItems="center" justifyContent="center">
+        <Heading size="3xl" mt={-12}>🚫️</Heading>
+        <Text fontSize="lg">{error?.message || "Unable to load feed"}</Text>
+      </Container>
+    );
   }
 
   if (!data && loading) {
