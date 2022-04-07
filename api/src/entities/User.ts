@@ -1,6 +1,7 @@
 import { Cascade, Collection, Entity, OneToMany, PrimaryKey, Property, Unique } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
+import { Like } from "./Like";
 import { Post } from "./Post";
 import { Token } from "./Token";
 
@@ -54,4 +55,8 @@ export class User {
   @Field(() => [Post])
   @OneToMany(() => Post, (b: Post) => b.user, { cascade: [Cascade.ALL] })
   posts = new Collection<Post>(this);
+
+  @Field(() => [Like])
+  @OneToMany(() => Like, (b: Like) => b.user, { cascade: [Cascade.ALL] })
+  likes = new Collection<Like>(this);
 }

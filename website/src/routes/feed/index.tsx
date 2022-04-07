@@ -26,6 +26,7 @@ const Posts = gql`
       data {
         id
         body
+        likes
         user {
           id
           name
@@ -60,9 +61,6 @@ const RemovePost = gql`
 `;
 
 export function Feed() {
-  const { user } = useUser();
-  const { isOpen, onClose, onOpen } = useDisclosure();
-
   const { data, loading, error, subscribeToMore, fetchMore } = useQuery<GetPostsQuery>(
     Posts,
     {

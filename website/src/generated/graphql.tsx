@@ -25,6 +25,13 @@ export type Auth = {
   user: User;
 };
 
+export type Like = {
+  __typename?: 'Like';
+  id: Scalars['String'];
+  post: Post;
+  user: User;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
@@ -33,6 +40,7 @@ export type Mutation = {
   login: Auth;
   logout: Scalars['Boolean'];
   signup: Auth;
+  toggleLike: Scalars['Float'];
 };
 
 
@@ -66,11 +74,18 @@ export type MutationSignupArgs = {
   username: Scalars['String'];
 };
 
+
+export type MutationToggleLikeArgs = {
+  id: Scalars['String'];
+};
+
 export type Post = {
   __typename?: 'Post';
+  _likes: Array<Like>;
   body: Scalars['String'];
   created: Scalars['DateTime'];
   id: Scalars['String'];
+  likes: Scalars['Float'];
   user: User;
 };
 
@@ -109,7 +124,13 @@ export type QueryGetUserArgs = {
 export type Subscription = {
   __typename?: 'Subscription';
   addPost: Post;
+  likesPost: Scalars['Float'];
   removePost: Scalars['String'];
+};
+
+
+export type SubscriptionLikesPostArgs = {
+  id: Scalars['String'];
 };
 
 export type Token = {
@@ -132,6 +153,7 @@ export type User = {
   first: Scalars['String'];
   id: Scalars['String'];
   last: Scalars['String'];
+  likes: Array<Like>;
   name: Scalars['String'];
   password: Scalars['String'];
   picture: Scalars['String'];
@@ -179,13 +201,27 @@ export type DeletePostMutationVariables = Exact<{
 
 export type DeletePostMutation = { __typename?: 'Mutation', deletePost: boolean };
 
+export type LikePostMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type LikePostMutation = { __typename?: 'Mutation', toggleLike: number };
+
+export type LikesSubscriptionVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type LikesSubscription = { __typename?: 'Subscription', likesPost: number };
+
 export type GetPostsQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
 
 export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -409,12 +445,72 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const LikePostDocument = gql`
+    mutation LikePost($id: String!) {
+  toggleLike(id: $id)
+}
+    `;
+export type LikePostMutationFn = Apollo.MutationFunction<LikePostMutation, LikePostMutationVariables>;
+
+/**
+ * __useLikePostMutation__
+ *
+ * To run a mutation, you first call `useLikePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLikePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [likePostMutation, { data, loading, error }] = useLikePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikePostMutation(baseOptions?: Apollo.MutationHookOptions<LikePostMutation, LikePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LikePostMutation, LikePostMutationVariables>(LikePostDocument, options);
+      }
+export type LikePostMutationHookResult = ReturnType<typeof useLikePostMutation>;
+export type LikePostMutationResult = Apollo.MutationResult<LikePostMutation>;
+export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
+export const LikesDocument = gql`
+    subscription Likes($id: String!) {
+  likesPost(id: $id)
+}
+    `;
+
+/**
+ * __useLikesSubscription__
+ *
+ * To run a query within a React component, call `useLikesSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useLikesSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLikesSubscription({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useLikesSubscription(baseOptions: Apollo.SubscriptionHookOptions<LikesSubscription, LikesSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<LikesSubscription, LikesSubscriptionVariables>(LikesDocument, options);
+      }
+export type LikesSubscriptionHookResult = ReturnType<typeof useLikesSubscription>;
+export type LikesSubscriptionResult = Apollo.SubscriptionResult<LikesSubscription>;
 export const GetPostsDocument = gql`
     query GetPosts($offset: Int, $limit: Int) {
   getPosts(offset: $offset, limit: $limit) {
     data {
       id
       body
+      likes
       user {
         id
         name

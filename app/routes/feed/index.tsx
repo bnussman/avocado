@@ -16,6 +16,7 @@ const Posts = gql`
       data {
         id
         body
+        likes
         user {
           id
           name

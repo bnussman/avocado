@@ -4,6 +4,7 @@ import { Post } from "../entities/Post";
 import { Paginated, PaginationArgs } from "../utils/paginated";
 import { PostArgs } from "./args";
 import { QueryOrder } from "@mikro-orm/core";
+import { Like } from "../entities/Like";
 
 @ObjectType()
 export class PostsResponse extends Paginated(Post) {}
@@ -53,9 +54,49 @@ export class PostsResolver {
     return post;
   }
 
+  @Mutation(() => Number)
+  @Authorized()
+  public async toggleLike(@Ctx() { user, em }: Context, @PubSub() pubSub: PubSubEngine, @Arg('id') id: string) {
+    const post = await em.findOneOrFail(Post, id);
+    const like = new Like({ user, post });
+
+    let likes;
+
+    try {
+      await em.persistAndFlush(like);
+
+      likes = post.likes + 1;
+
+      post.likes = likes;
+
+    }
+    catch (error) {
+      // @TODOD check if we have a uniqueness error (if we do, we dislike)
+      await em.nativeDelete(Like, { user, post });
+
+      likes = post.likes - 1;
+
+      post.likes = likes;
+
+    }
+
+    em.persistAndFlush(post);
+
+    pubSub.publish(`likes-${id}`, likes);
+
+    return likes;
+  }
+
   @Subscription(() => Post, { topics: "create-post" })
   public addPost(@Root() post: Post): Post {
     return post;
+  }
+
+  @Subscription(() => Number, {
+    topics: ({ args }) => `likes-${args.id}`,
+  })
+  public likesPost(@Arg("id") id: string, @Root() likes: number): number {
+    return likes;
   }
 
   @Subscription(() => String, { topics: "delete-post" })
