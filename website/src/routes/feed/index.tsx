@@ -20,13 +20,14 @@ import {
   Text
 } from '@chakra-ui/react';
 
-const Posts = gql`
+export const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
     getPosts(offset: $offset, limit: $limit) {
       data {
         id
         body
         likes
+        liked
         user {
           id
           name
@@ -44,6 +45,8 @@ const AddPost = gql`
     addPost {
       id
       body
+      likes
+      liked
       user {
         id
         name
@@ -73,7 +76,7 @@ export function Feed() {
 
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
-  const canLoadMore = posts && posts.length < count;
+  const canLoadMore = Boolean(posts) && Boolean(count) && posts!.length < count;
 
   const getMore = () => {
     fetchMore({
@@ -147,8 +150,8 @@ export function Feed() {
           <Box>
             <Loading />
           </Box>
-        </Waypoint>)
-      }
+        </Waypoint>
+      )}
       {loading && <Loading />}
     </Box>
   );

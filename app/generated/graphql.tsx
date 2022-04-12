@@ -79,6 +79,12 @@ export type MutationToggleLikeArgs = {
   id: Scalars['String'];
 };
 
+export type PaginatedPostsResponse = {
+  __typename?: 'PaginatedPostsResponse';
+  count: Scalars['Int'];
+  data: Array<PostsResponse>;
+};
+
 export type Post = {
   __typename?: 'Post';
   _likes: Array<Like>;
@@ -91,13 +97,18 @@ export type Post = {
 
 export type PostsResponse = {
   __typename?: 'PostsResponse';
-  count: Scalars['Int'];
-  data: Array<Post>;
+  _likes: Array<Like>;
+  body: Scalars['String'];
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  liked: Scalars['Boolean'];
+  likes: Scalars['Float'];
+  user: User;
 };
 
 export type Query = {
   __typename?: 'Query';
-  getPosts: PostsResponse;
+  getPosts: PaginatedPostsResponse;
   getTokens: TokensResponse;
   getUser: User;
 };
@@ -221,12 +232,12 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PostsResponse', count: number, data: Array<{ __typename?: 'Post', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPostsResponse', count: number, data: Array<{ __typename?: 'PostsResponse', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
 
 export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
+export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
 
 export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -545,6 +556,7 @@ export const AddPostDocument = gql`
   addPost {
     id
     body
+    likes
     user {
       id
       name

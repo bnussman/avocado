@@ -34,6 +34,7 @@ const AddPost = gql`
     addPost {
       id
       body
+      likes
       user {
         id
         name

@@ -84,8 +84,9 @@ export function Post({ body, user, id, likes: initialLikes }: Unpacked<GetPostsQ
             <Button
               variant="unstyled"
               leftIcon={<Icon as={AntDesign} name="heart" size="xs" />}
-              isLoading={likeLoading}
+              // isLoading={likeLoading}
               onPress={onLike}
+              isDisabled={!Boolean(user)}
             >
               {String(likes)}
             </Button>
