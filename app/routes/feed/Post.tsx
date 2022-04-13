@@ -44,7 +44,7 @@ const Likes = gql`
   }
 `;
 
-export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<GetPostsQuery['getPosts']['data']>) {
+export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['getPosts']['data']>) {
   const { user: me } = useUser();
   const toast = useToast();
 
@@ -68,6 +68,10 @@ export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<Ge
       return console.warn(`Unable to find post ${id} in cache to mutate its likes value`);
     }
 
+    if ((oldPosts[idx].likes === subscriptionData.likes) && (oldPosts[idx].liked === subscriptionData.liked)) {
+      return;
+    }
+
     if (subscriptionData?.liker.id === me?.id) {
       oldPosts[idx] = { ...oldPosts[idx], liked: subscriptionData.liked };
     }
@@ -86,10 +90,8 @@ export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<Ge
   };
 
   const [deletePost, { loading: deleteLoading }] = useMutation<DeletePostMutation>(Delete);
-  const [likePost, { loading: likeLoading }] = useMutation<LikePostMutation>(Like);
+  const [likePost] = useMutation<LikePostMutation>(Like);
   const { data } = useSubscription<LikesSubscription>(Likes, { variables: { id }, onSubscriptionData });
-
-  const likes = data?.likesPost?.likes || initialLikes;
 
   const onDelete = () => {
     deletePost({ variables: { id } })
@@ -102,38 +104,42 @@ export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<Ge
   };
 
   const onLike = () => {
-    // const oldData: GetPostsQuery | null = client.readQuery({ query: Posts, variables: { limit: MAX_PAGE_SIZE, offset: 0 } });
+    const oldData: GetPostsQuery | null = client.readQuery({ query: Posts, variables: { limit: MAX_PAGE_SIZE, offset: 0 } });
 
-    // if (!oldData) {
-    //   return console.warn("No Posts Query Data");
-    // }
+    if (!oldData) {
+      return console.warn("No Posts Query Data");
+    }
 
-    // const oldPosts: GetPostsQuery['getPosts']['data'] = [...oldData.getPosts.data];
-    // const idx = oldPosts.findIndex(post => post.id === id);
+    const oldPosts: GetPostsQuery['getPosts']['data'] = [...oldData.getPosts.data];
+    const idx = oldPosts.findIndex(post => post.id === id);
 
-    // if (idx < 0) {
-    //   return console.warn(`Unable to find post ${id} in cache to mutate its likes value`);
-    // }
+    if (idx < 0) {
+      return console.warn(`Unable to find post ${id} in cache to mutate its likes value`);
+    }
 
-    // const wasLiked = oldPosts[idx].liked
-    // const oldLikes = oldPosts[idx].likes
+    const wasLiked = oldPosts[idx].liked;
+    const oldLikes = oldPosts[idx].likes;
+    const newLiked = !wasLiked;
+    const newLikes = wasLiked ? oldLikes - 1 : oldLikes + 1;
 
-    // oldPosts[idx] = { ...oldPosts[idx], liked: !wasLiked };
-    // oldPosts[idx] = { ...oldPosts[idx], likes: wasLiked ? oldLikes - 1 : oldLikes + 1 };
+    if ((oldPosts[idx].likes === newLikes) && (oldPosts[idx].liked === newLiked)) {
+      return;
+    }
 
-    // client.writeQuery({
-    //   query: Posts,
-    //   data: {
-    //     getPosts: {
-    //       data: oldPosts,
-    //       count: oldData.getPosts.count
-    //     }
-    //   }
-    // });
+    oldPosts[idx] = { ...oldPosts[idx], liked: newLiked };
+    oldPosts[idx] = { ...oldPosts[idx], likes: newLikes };
+
+    client.writeQuery({
+      query: Posts,
+      data: {
+        getPosts: {
+          data: oldPosts,
+          count: oldData.getPosts.count
+        }
+      }
+    });
 
     likePost({ variables: { id } })
-      .then(() => {
-      })
       .catch((error: ApolloError) => {
         toast.show({ status: 'error', title: error.message })
       });
@@ -157,7 +163,6 @@ export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<Ge
             <Button
               variant="unstyled"
               leftIcon={<Icon as={AntDesign} name={liked ? "heart" : "hearto"} size="xs" color={liked ? "red.500" : undefined} />}
-              // isLoading={likeLoading}
               onPress={onLike}
               isDisabled={!Boolean(user)}
             >
