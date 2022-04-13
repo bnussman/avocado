@@ -10,13 +10,14 @@ import { GetPostsQuery } from '../../generated/graphql';
 import { AntDesign } from '@expo/vector-icons'; 
 import { useUser } from '../../utils/userUser';
 
-const Posts = gql`
+export const Posts = gql`
   query GetPosts($offset: Int, $limit: Int) {
     getPosts(offset: $offset, limit: $limit) {
       data {
         id
         body
         likes
+        liked
         user {
           id
           name
@@ -35,6 +36,7 @@ const AddPost = gql`
       id
       body
       likes
+      liked
       user {
         id
         name
@@ -68,10 +70,9 @@ export function Feed(props: any) {
   const isRefreshing = Boolean(data) && loading;
   const posts = data?.getPosts.data;
   const count = data?.getPosts.count || 0;
+  const canLoadMore = posts && count && (posts?.length < count);
 
   const getMore = () => {
-    const canLoadMore = posts && posts.length < count;
-
     if (!canLoadMore || isRefreshing) return;
 
     fetchMore({

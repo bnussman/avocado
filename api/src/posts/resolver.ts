@@ -44,14 +44,12 @@ export class PostsResolver {
     );
 
     // @TODO find a better way to check if a user liked each post
+    const data = posts.map((post: Post) => ({
+      ...post,
+      liked: post._likes.getItems().some(like => like.user.id === ctx.user?.id)
+    }))
 
-    return {
-      data: posts.map((post: Post) => ({
-        ...post,
-        liked: post._likes.getItems().some(like => like.user.id === ctx.user?.id)
-      })),
-      count: count
-    };
+    return { data, count };
   }  
 
   @Mutation(() => Boolean)

@@ -32,6 +32,13 @@ export type Like = {
   user: User;
 };
 
+export type LikeResponse = {
+  __typename?: 'LikeResponse';
+  liked: Scalars['Boolean'];
+  liker: User;
+  likes: Scalars['Float'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createPost: Post;
@@ -134,8 +141,8 @@ export type QueryGetUserArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  addPost: Post;
-  likesPost: Scalars['Float'];
+  addPost: PostsResponse;
+  likesPost: LikeResponse;
   removePost: Scalars['String'];
 };
 
@@ -224,7 +231,7 @@ export type LikesSubscriptionVariables = Exact<{
 }>;
 
 
-export type LikesSubscription = { __typename?: 'Subscription', likesPost: number };
+export type LikesSubscription = { __typename?: 'Subscription', likesPost: { __typename?: 'LikeResponse', liked: boolean, likes: number, liker: { __typename?: 'User', id: string } } };
 
 export type GetPostsQueryVariables = Exact<{
   offset?: InputMaybe<Scalars['Int']>;
@@ -232,12 +239,12 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPostsResponse', count: number, data: Array<{ __typename?: 'PostsResponse', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPostsResponse', count: number, data: Array<{ __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
 
 export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'Post', id: string, body: string, likes: number, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
+export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
 
 export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -478,7 +485,13 @@ export type LikePostMutationResult = Apollo.MutationResult<LikePostMutation>;
 export type LikePostMutationOptions = Apollo.BaseMutationOptions<LikePostMutation, LikePostMutationVariables>;
 export const LikesDocument = gql`
     subscription Likes($id: String!) {
-  likesPost(id: $id)
+  likesPost(id: $id) {
+    liker {
+      id
+    }
+    liked
+    likes
+  }
 }
     `;
 
@@ -511,6 +524,7 @@ export const GetPostsDocument = gql`
       id
       body
       likes
+      liked
       user {
         id
         name
@@ -557,6 +571,7 @@ export const AddPostDocument = gql`
     id
     body
     likes
+    liked
     user {
       id
       name

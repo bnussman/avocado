@@ -95,8 +95,6 @@ export function Post({ body, user, id, likes: intialLikes, liked }: Unpacked<Get
 
   const likes = data?.likesPost?.likes || intialLikes;
 
-  console.log("likes", data?.likesPost.likes);
-
   const onDelete = () => {
     deletePost({ variables: { id } })
       .then(() => {
@@ -132,6 +130,7 @@ export function Post({ body, user, id, likes: intialLikes, liked }: Unpacked<Get
               aria-label={`Like post by ${user.name} (${id})`}
               colorScheme={liked ? "red" : "gray"}
               isLoading={likeLoading}
+              isDisabled={!Boolean(me)}
               leftIcon={<StarIcon />}
               onClick={onLike}
             >

@@ -1,9 +1,12 @@
 import React from 'react';
-import { ApolloError, gql, useMutation, useSubscription } from '@apollo/client';
+import { ApolloError, gql, OnSubscriptionDataOptions, useMutation, useSubscription } from '@apollo/client';
 import { DeletePostMutation, GetPostsQuery, LikePostMutation, LikesSubscription } from '../../generated/graphql';
 import { Unpacked } from '../../utils/types';
 import { useUser } from '../../utils/userUser';
 import { Entypo, AntDesign, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'; 
+import { client } from '../../utils/apollo';
+import { MAX_PAGE_SIZE } from '../../utils/constants';
+import { Posts } from '.';
 import {
   Text,
   Avatar,
@@ -31,19 +34,62 @@ const Like = gql`
 
 const Likes = gql`
   subscription Likes($id: String!) {
-    likesPost(id: $id)
+    likesPost(id: $id) {
+      liker {
+        id
+      }
+      liked
+      likes
+    }
   }
 `;
 
-export function Post({ body, user, id, likes: initialLikes }: Unpacked<GetPostsQuery['getPosts']['data']>) {
+export function Post({ body, user, id, likes: initialLikes, liked }: Unpacked<GetPostsQuery['getPosts']['data']>) {
   const { user: me } = useUser();
   const toast = useToast();
 
+  const onSubscriptionData = (data: OnSubscriptionDataOptions<LikesSubscription>) => {
+    const subscriptionData = data.subscriptionData.data?.likesPost;
+
+    if (!subscriptionData) {
+      return console.warn("Invalid subscription data from a like event");
+    }
+
+    const oldData: GetPostsQuery | null = client.readQuery({ query: Posts, variables: { limit: MAX_PAGE_SIZE, offset: 0 } });
+
+    if (!oldData) {
+      return console.warn("No Posts Query Data");
+    }
+
+    const oldPosts: GetPostsQuery['getPosts']['data'] = [...oldData.getPosts.data];
+    const idx = oldPosts.findIndex(post => post.id === id);
+
+    if (idx < 0) {
+      return console.warn(`Unable to find post ${id} in cache to mutate its likes value`);
+    }
+
+    if (subscriptionData?.liker.id === me?.id) {
+      oldPosts[idx] = { ...oldPosts[idx], liked: subscriptionData.liked };
+    }
+
+    oldPosts[idx] = { ...oldPosts[idx], likes: subscriptionData.likes || 0 };
+
+    client.writeQuery({
+      query: Posts,
+      data: {
+        getPosts: {
+          data: oldPosts,
+          count: oldData.getPosts.count
+        }
+      }
+    });
+  };
+
   const [deletePost, { loading: deleteLoading }] = useMutation<DeletePostMutation>(Delete);
   const [likePost, { loading: likeLoading }] = useMutation<LikePostMutation>(Like);
-  const { data } = useSubscription<LikesSubscription>(Likes, { variables: { id }});
+  const { data } = useSubscription<LikesSubscription>(Likes, { variables: { id }, onSubscriptionData });
 
-  const likes = data?.likesPost || initialLikes;
+  const likes = data?.likesPost?.likes || initialLikes;
 
   const onDelete = () => {
     deletePost({ variables: { id } })
@@ -56,15 +102,42 @@ export function Post({ body, user, id, likes: initialLikes }: Unpacked<GetPostsQ
   };
 
   const onLike = () => {
+    // const oldData: GetPostsQuery | null = client.readQuery({ query: Posts, variables: { limit: MAX_PAGE_SIZE, offset: 0 } });
+
+    // if (!oldData) {
+    //   return console.warn("No Posts Query Data");
+    // }
+
+    // const oldPosts: GetPostsQuery['getPosts']['data'] = [...oldData.getPosts.data];
+    // const idx = oldPosts.findIndex(post => post.id === id);
+
+    // if (idx < 0) {
+    //   return console.warn(`Unable to find post ${id} in cache to mutate its likes value`);
+    // }
+
+    // const wasLiked = oldPosts[idx].liked
+    // const oldLikes = oldPosts[idx].likes
+
+    // oldPosts[idx] = { ...oldPosts[idx], liked: !wasLiked };
+    // oldPosts[idx] = { ...oldPosts[idx], likes: wasLiked ? oldLikes - 1 : oldLikes + 1 };
+
+    // client.writeQuery({
+    //   query: Posts,
+    //   data: {
+    //     getPosts: {
+    //       data: oldPosts,
+    //       count: oldData.getPosts.count
+    //     }
+    //   }
+    // });
+
     likePost({ variables: { id } })
       .then(() => {
-        // @TODO update cache :O
       })
       .catch((error: ApolloError) => {
         toast.show({ status: 'error', title: error.message })
       });
   };
-
 
   return (
     <Box p={4} pb={2}>
@@ -83,7 +156,7 @@ export function Post({ body, user, id, likes: initialLikes }: Unpacked<GetPostsQ
           <Flex justifyContent="space-between" flexDirection="row" mt={1}>
             <Button
               variant="unstyled"
-              leftIcon={<Icon as={AntDesign} name="heart" size="xs" />}
+              leftIcon={<Icon as={AntDesign} name={liked ? "heart" : "hearto"} size="xs" color={liked ? "red.500" : undefined} />}
               // isLoading={likeLoading}
               onPress={onLike}
               isDisabled={!Boolean(user)}
