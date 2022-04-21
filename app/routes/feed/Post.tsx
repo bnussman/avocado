@@ -104,6 +104,10 @@ export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['g
   };
 
   const onLike = () => {
+    if (!me) {
+      return;
+    }
+
     const oldData: GetPostsQuery | null = client.readQuery({ query: Posts, variables: { limit: MAX_PAGE_SIZE, offset: 0 } });
 
     if (!oldData) {
@@ -159,35 +163,17 @@ export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['g
               {body}
             </Text>
           </Flex>
-          <Flex justifyContent="space-between" flexDirection="row" mt={1}>
-            <Button
-              variant="unstyled"
-              leftIcon={<Icon as={AntDesign} name={liked ? "heart" : "hearto"} size="xs" color={liked ? "red.500" : undefined} />}
-              onPress={onLike}
-              isDisabled={!Boolean(user)}
-            >
-              {String(likes)}
-            </Button>
-            <Button
-              variant="unstyled"
-              leftIcon={<Icon as={MaterialCommunityIcons} name="comment-outline" size="xs" />}
-              isLoading={false}
-              onPress={undefined}
-            >
-              {5}
-            </Button>
-            <Button
-              variant="unstyled"
-              leftIcon={<Icon as={Ionicons} name="ios-share-outline" size="xs" />}
-              isLoading={false}
-              onPress={undefined}
-            >
-            </Button>
-          </Flex>
         </Box>
+        <Button
+          variant="unstyled"
+          leftIcon={<Icon as={AntDesign} name={liked ? "heart" : "hearto"} size="xs" color={liked ? "red.500" : undefined} />}
+          onPress={onLike}
+          isDisabled={!Boolean(user)}
+        >
+          {String(likes)}
+        </Button>
         {user.id === me?.id &&
-        <>
-          <Box>
+          <Box alignSelf="center">
             <Menu
               key={`menu-${id}`}
               w="190"
@@ -202,7 +188,6 @@ export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['g
               </Menu.Item>
             </Menu>
           </Box>
-        </>
         }
       </HStack>
     </Box>

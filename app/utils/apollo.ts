@@ -12,7 +12,7 @@ import {
   Observable,
 } from '@apollo/client/core';
 
-const host = "192.168.1.18";
+const host = "localhost";
 
 const url = __DEV__ ? `http://${host}:3001/graphql` : 'https://api.avocado.community/graphql' ;
 const wsUrl = __DEV__  ? `ws://${host}:3001/subscriptions` : 'wss://api.avocado.community/subscriptions';
