@@ -115,7 +115,21 @@ async function startApolloServer() {
 
   const serverCleanup = useServer({
     schema,
-    onSubscribe: (ctx, msg) => onSubscribe(ctx, msg, schema, orm)
+    onConnect: async (data) => {
+      const auth = data.connectionParams?.token as string | undefined;
+      const context = { em: orm.em.fork() };
+
+      if (!auth) return context;
+
+      const token = await orm.em.fork().findOne(Token, auth, { populate: ['user'] });
+
+      if (token) {
+        return {
+          contextValue: { user: token.user, token },
+          schema,
+        }
+      }
+    },
   }, wsServer);
 
   const server = new ApolloServer({

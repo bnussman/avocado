@@ -14,6 +14,7 @@ import {
   Box,
   MenuDivider,
 } from '@chakra-ui/react'
+import { CloseIcon, LockIcon } from '@chakra-ui/icons';
 
 const Logout = gql`
   mutation Logout {
@@ -55,9 +56,9 @@ export function UserMenu() {
         {user.name}
       </MenuButton>
       <MenuList>
-        <MenuItem icon={<Box>🔒</Box>} as={Link} to="/sessions">Sessions</MenuItem>
+        <MenuItem icon={<LockIcon />} as={Link} to="/sessions">Sessions</MenuItem>
         <MenuDivider />
-        <MenuItem icon={<Box>🚪</Box>} onClick={onLogout}>Logout</MenuItem>
+        <MenuItem icon={<CloseIcon />} onClick={onLogout}>Logout</MenuItem>
       </MenuList>
     </Menu>
   );

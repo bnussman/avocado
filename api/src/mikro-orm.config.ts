@@ -8,7 +8,7 @@ export default {
   user: DB_USER,
   password: DB_PASSWORD,
   clientUrl: DB_URL,
-  // loadStrategy: LoadStrategy.JOINED,
+  loadStrategy: LoadStrategy.JOINED,
   debug: !isProduction,
   driverOptions: DB_CA ? {
     connection: {

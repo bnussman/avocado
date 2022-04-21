@@ -68,7 +68,6 @@ export function SignupModal({ isOpen, onClose }: Props) {
   const handleClick = () => setShow(!show);
 
   const onSubmit = handleSubmit(async (variables) => {
-    console.log(variables);
     const { data } = await signup({ variables: { ...variables, picture: variables.picture[0] } });
 
     if (data) {
@@ -92,8 +91,6 @@ export function SignupModal({ isOpen, onClose }: Props) {
   const Image = useMemo(() => (
     <Avatar size="xl" src={picture?.[0] ? URL.createObjectURL(picture?.[0]) : undefined} cursor="pointer" />
   ), [picture]);
-
-  console.log(picture);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>

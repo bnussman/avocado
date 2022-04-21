@@ -29,6 +29,7 @@ const Login = gql`
         name
         username
         email
+        picture
       }
       token
     }
