@@ -28,6 +28,10 @@ export const Posts = gql`
         body
         likes
         liked
+        uploads {
+          id
+          url
+        }
         user {
           id
           name
@@ -47,6 +51,10 @@ const AddPost = gql`
       body
       likes
       liked
+      uploads {
+        id
+        url
+      }
       user {
         id
         name

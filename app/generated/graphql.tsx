@@ -25,6 +25,15 @@ export type Auth = {
   user: User;
 };
 
+export type File = {
+  __typename?: 'File';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  post: Post;
+  url: Scalars['String'];
+  user: User;
+};
+
 export type Like = {
   __typename?: 'Like';
   id: Scalars['String'];
@@ -53,6 +62,7 @@ export type Mutation = {
 
 export type MutationCreatePostArgs = {
   body: Scalars['String'];
+  pictures?: InputMaybe<Array<Scalars['Upload']>>;
 };
 
 
@@ -99,6 +109,7 @@ export type Post = {
   created: Scalars['DateTime'];
   id: Scalars['String'];
   likes: Scalars['Float'];
+  uploads: Array<File>;
   user: User;
 };
 
@@ -110,6 +121,7 @@ export type PostsResponse = {
   id: Scalars['String'];
   liked: Scalars['Boolean'];
   likes: Scalars['Float'];
+  uploads: Array<File>;
   user: User;
 };
 

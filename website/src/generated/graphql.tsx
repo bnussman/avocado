@@ -25,6 +25,15 @@ export type Auth = {
   user: User;
 };
 
+export type File = {
+  __typename?: 'File';
+  created: Scalars['DateTime'];
+  id: Scalars['String'];
+  post: Post;
+  url: Scalars['String'];
+  user: User;
+};
+
 export type Like = {
   __typename?: 'Like';
   id: Scalars['String'];
@@ -53,6 +62,7 @@ export type Mutation = {
 
 export type MutationCreatePostArgs = {
   body: Scalars['String'];
+  pictures?: InputMaybe<Array<Scalars['Upload']>>;
 };
 
 
@@ -99,6 +109,7 @@ export type Post = {
   created: Scalars['DateTime'];
   id: Scalars['String'];
   likes: Scalars['Float'];
+  uploads: Array<File>;
   user: User;
 };
 
@@ -110,6 +121,7 @@ export type PostsResponse = {
   id: Scalars['String'];
   liked: Scalars['Boolean'];
   likes: Scalars['Float'];
+  uploads: Array<File>;
   user: User;
 };
 
@@ -186,10 +198,11 @@ export type LoginMutationVariables = Exact<{
 }>;
 
 
-export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string } } };
+export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'Auth', token: string, user: { __typename?: 'User', id: string, first: string, last: string, name: string, username: string, email: string, picture: string } } };
 
 export type CreatePostMutationVariables = Exact<{
   body: Scalars['String'];
+  pictures?: InputMaybe<Array<Scalars['Upload']> | Scalars['Upload']>;
 }>;
 
 
@@ -239,12 +252,12 @@ export type GetPostsQueryVariables = Exact<{
 }>;
 
 
-export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPostsResponse', count: number, data: Array<{ __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
+export type GetPostsQuery = { __typename?: 'Query', getPosts: { __typename?: 'PaginatedPostsResponse', count: number, data: Array<{ __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, uploads: Array<{ __typename?: 'File', id: string, url: string }>, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } }> } };
 
 export type AddPostSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
+export type AddPostSubscription = { __typename?: 'Subscription', addPost: { __typename?: 'PostsResponse', id: string, body: string, likes: number, liked: boolean, uploads: Array<{ __typename?: 'File', id: string, url: string }>, user: { __typename?: 'User', id: string, name: string, username: string, picture: string } } };
 
 export type SubscriptionSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -279,6 +292,7 @@ export const LoginDocument = gql`
       name
       username
       email
+      picture
     }
     token
   }
@@ -312,8 +326,8 @@ export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const CreatePostDocument = gql`
-    mutation CreatePost($body: String!) {
-  createPost(body: $body) {
+    mutation CreatePost($body: String!, $pictures: [Upload!]) {
+  createPost(body: $body, pictures: $pictures) {
     id
     body
     user {
@@ -338,6 +352,7 @@ export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, C
  * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
  *   variables: {
  *      body: // value for 'body'
+ *      pictures: // value for 'pictures'
  *   },
  * });
  */
@@ -536,6 +551,10 @@ export const GetPostsDocument = gql`
       body
       likes
       liked
+      uploads {
+        id
+        url
+      }
       user {
         id
         name
@@ -583,6 +602,10 @@ export const AddPostDocument = gql`
     body
     likes
     liked
+    uploads {
+      id
+      url
+    }
     user {
       id
       name

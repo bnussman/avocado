@@ -6,6 +6,8 @@ import { PostArgs } from "./args";
 import { QueryOrder } from "@mikro-orm/core";
 import { Like } from "../entities/Like";
 import { User } from "../entities/User";
+import { FileUpload } from "graphql-upload";
+import { upload, uploadMany } from "../utils/s3";
 
 @ObjectType()
 class PostsResponse extends Post {
@@ -39,7 +41,7 @@ export class PostsResolver {
         limit,
         offset,
         orderBy: { created: QueryOrder.DESC },
-        populate: ['user', '_likes'],
+        populate: ['user', 'uploads', '_likes'],
       }
     );
 
@@ -66,10 +68,16 @@ export class PostsResolver {
   @Mutation(() => Post)
   @Authorized()
   public async createPost(@Ctx() { user, em }: Context, @PubSub() pubSub: PubSubEngine, @Args() args: PostArgs) {
+    const uploads = await (args.pictures as unknown as Promise<FileUpload>[]);
+
     const post = new Post({
-      ...args,
+      body: args.body,
       user,
     });
+
+    const files = await uploadMany(uploads, post, user);
+
+    post.uploads.set(files);
 
     await em.persistAndFlush(post);
 

@@ -2,6 +2,7 @@ import { Cascade, Collection, Entity, ManyToOne, OneToMany, PrimaryKey, Property
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
 import { Like } from "./Like";
+import { File } from "./File";
 import { User } from "./User";
 
 @ObjectType()
@@ -30,6 +31,10 @@ export class Post {
   @Field(() => [Like])
   @OneToMany(() => Like, (b: Like) => b.post, { cascade: [Cascade.ALL] })
   _likes = new Collection<Like>(this);
+
+  @Field(() => [File])
+  @OneToMany(() => File, (b: File) => b.post, { cascade: [Cascade.ALL] })
+  uploads = new Collection<File>(this);
 
   @Field()
   @Property()

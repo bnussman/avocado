@@ -2,12 +2,15 @@ import { DeleteIcon, StarIcon } from '@chakra-ui/icons';
 import { Unpacked } from '../../utils/types';
 import { useUser } from '../../utils/useUser';
 import { ApolloError, gql, OnSubscriptionDataOptions, useMutation, useSubscription } from '@apollo/client';
+import { client } from '../../utils/apollo';
+import { Posts } from '.';
+import { MAX_PAGE_SIZE } from '../../utils/constants';
+import { PhotoDialog } from '../../components/PhotoDialog';
 import {
   DeletePostMutation,
   GetPostsQuery,
   LikePostMutation,
   LikesSubscription,
-  PostsResponse
 } from '../../generated/graphql';
 import {
   Text,
@@ -18,11 +21,11 @@ import {
   Spacer,
   IconButton,
   useToast,
-  Button
+  Button,
+  Image,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { client } from '../../utils/apollo';
-import { Posts } from '.';
-import { MAX_PAGE_SIZE } from '../../utils/constants';
+import { useState } from 'react';
 
 const Delete = gql`
   mutation DeletePost($id: String!) {
@@ -48,9 +51,11 @@ const Likes = gql`
   }
 `;
 
-export function Post({ body, user, id, likes: intialLikes, liked }: Unpacked<GetPostsQuery['getPosts']['data']>) {
+export function Post({ body, user, id, likes: intialLikes, liked, uploads }: Unpacked<GetPostsQuery['getPosts']['data']>) {
   const { user: me } = useUser();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const onSubscriptionData = (data: OnSubscriptionDataOptions<LikesSubscription>) => {
     const subscriptionData = data.subscriptionData.data?.likesPost;
@@ -115,6 +120,11 @@ export function Post({ body, user, id, likes: intialLikes, liked }: Unpacked<Get
       });
   };
 
+  const onImageClick = (idx: number) => {
+    setSelectedImage(idx);
+    onOpen();
+  };
+
   return (
     <Box borderWidth='1px' borderRadius='lg' p={8}>
       <Stack spacing={4}>
@@ -150,7 +160,20 @@ export function Post({ body, user, id, likes: intialLikes, liked }: Unpacked<Get
         <Box>
           {body}
         </Box>
+        <HStack spacing={4} flexWrap="wrap">
+          {uploads.map((upload, idx) => (
+            <Image
+              key={`${id}-${upload.id}`}
+              onClick={() => onImageClick(idx)}
+              src={upload.url}
+              _hover={{ shadow: "xl" }}
+              rounded="xl"
+              maxW="100px"
+            />
+          ))}
+        </HStack>
       </Stack>
+      <PhotoDialog onClose={onClose} isOpen={isOpen} src={uploads[selectedImage]?.url} />
     </Box>
   );
 }
