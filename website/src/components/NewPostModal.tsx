@@ -83,7 +83,6 @@ export function NewPostModal({ isOpen, onClose }: Props) {
             _hover={{ shadow: "xl" }}
             rounded="xl"
             w="40px"
-          // onClick={() => onDeleteItem(idx)}
           />
         ))}
       </HStack>

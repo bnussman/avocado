@@ -68,16 +68,18 @@ export class PostsResolver {
   @Mutation(() => Post)
   @Authorized()
   public async createPost(@Ctx() { user, em }: Context, @PubSub() pubSub: PubSubEngine, @Args() args: PostArgs) {
-    const uploads = await (args.pictures as unknown as Promise<FileUpload>[]);
-
     const post = new Post({
       body: args.body,
       user,
     });
 
-    const files = await uploadMany(uploads, post, user);
+    const uploads = await (args.pictures as unknown as Promise<FileUpload>[]);
 
-    post.uploads.set(files);
+    if (uploads) {
+      const files = await uploadMany(uploads, post, user);
+
+      post.uploads.set(files);
+    }
 
     await em.persistAndFlush(post);
 

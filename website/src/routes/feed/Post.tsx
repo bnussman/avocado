@@ -160,18 +160,20 @@ export function Post({ body, user, id, likes: intialLikes, liked, uploads }: Unp
         <Box>
           {body}
         </Box>
-        <HStack spacing={4} flexWrap="wrap">
-          {uploads.map((upload, idx) => (
-            <Image
-              key={`${id}-${upload.id}`}
-              onClick={() => onImageClick(idx)}
-              src={upload.url}
-              _hover={{ shadow: "xl" }}
-              rounded="xl"
-              maxW="100px"
-            />
-          ))}
-        </HStack>
+        {uploads.length > 0 ?
+          <HStack spacing={4} flexWrap="wrap">
+            {uploads.map((upload, idx) => (
+              <Image
+                key={`${id}-${upload.id}`}
+                onClick={() => onImageClick(idx)}
+                src={upload.url}
+                _hover={{ shadow: "xl" }}
+                rounded="xl"
+                maxW="100px"
+              />
+            ))}
+          </HStack>
+          : null}
       </Stack>
       <PhotoDialog onClose={onClose} isOpen={isOpen} src={uploads[selectedImage]?.url} />
     </Box>

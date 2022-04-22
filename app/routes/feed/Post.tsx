@@ -3,7 +3,7 @@ import { ApolloError, gql, OnSubscriptionDataOptions, useMutation, useSubscripti
 import { DeletePostMutation, GetPostsQuery, LikePostMutation, LikesSubscription } from '../../generated/graphql';
 import { Unpacked } from '../../utils/types';
 import { useUser } from '../../utils/userUser';
-import { Entypo, AntDesign, MaterialCommunityIcons, Ionicons } from '@expo/vector-icons'; 
+import { Entypo, AntDesign } from '@expo/vector-icons'; 
 import { client } from '../../utils/apollo';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { Posts } from '.';
@@ -17,7 +17,8 @@ import {
   Menu,
   Pressable,
   Icon,
-  Button
+  Button,
+  Image
 } from 'native-base';
 
 const Delete = gql`
@@ -44,7 +45,7 @@ const Likes = gql`
   }
 `;
 
-export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['getPosts']['data']>) {
+export function Post({ body, user, id, likes, liked, uploads }: Unpacked<GetPostsQuery['getPosts']['data']>) {
   const { user: me } = useUser();
   const toast = useToast();
 
@@ -163,6 +164,19 @@ export function Post({ body, user, id, likes, liked }: Unpacked<GetPostsQuery['g
               {body}
             </Text>
           </Flex>
+          {uploads.length > 0 ?
+            <HStack space={4} flexWrap="wrap" mt={3}>
+              {uploads.map((upload) => (
+                <Image
+                  key={`${id}-${upload.id}`}
+                  alt={`${id}-${upload.id}`}
+                  source={{ uri: upload.url }}
+                  rounded="xl"
+                  size="md"
+                />
+              ))}
+            </HStack>
+            : null}
         </Box>
         <Button
           variant="unstyled"

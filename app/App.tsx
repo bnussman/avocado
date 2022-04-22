@@ -22,12 +22,20 @@ const Stack = createStackNavigator();
 const theme = extendTheme({ colors });
 
 function DrawerNavigator() {
+  const { colorMode } = useColorMode();
   const { data } = useQuery<GetUserQuery>(User, { errorPolicy: 'ignore' });
 
   return (
     <Drawer.Navigator
       useLegacyImplementation
       drawerContent={(props) => <MyDrawer {...props} />}
+      screenOptions={{
+        headerTintColor: colors.primary[400],
+        headerTitleStyle: {
+          fontWeight: '900',
+          color: colorMode === 'dark' ? 'white' : 'black'
+        },
+      }}
     >
       <Drawer.Screen name="Feed" component={Feed} />
       {!data?.getUser && (
