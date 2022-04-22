@@ -3,7 +3,7 @@ import { Context } from "../utils/context";
 import { Post } from "../entities/Post";
 import { Paginated, PaginationArgs } from "../utils/paginated";
 import { PostArgs } from "./args";
-import { QueryOrder } from "@mikro-orm/core";
+import { PopulateHint, QueryOrder } from "@mikro-orm/core";
 import { Like } from "../entities/Like";
 import { User } from "../entities/User";
 import { FileUpload } from "graphql-upload";
@@ -44,6 +44,10 @@ export class PostsResolver {
         populate: ['user', 'uploads', '_likes'],
       }
     );
+
+    for (let i = 0; i < posts.length; i++ ) {
+      console.log(i, posts[i].body);
+    }
 
     const data = posts.map((post: Post) => ({
       ...post,

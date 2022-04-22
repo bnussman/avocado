@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ApolloError, gql, OnSubscriptionDataOptions, useMutation, useSubscription } from '@apollo/client';
 import { DeletePostMutation, GetPostsQuery, LikePostMutation, LikesSubscription } from '../../generated/graphql';
 import { Unpacked } from '../../utils/types';
@@ -18,8 +18,10 @@ import {
   Pressable,
   Icon,
   Button,
-  Image
+  Image,
+  useDisclose
 } from 'native-base';
+import { PhotoDialog } from '../../components/PhotoDialog';
 
 const Delete = gql`
   mutation DeletePost($id: String!) {
@@ -48,6 +50,8 @@ const Likes = gql`
 export function Post({ body, user, id, likes, liked, uploads }: Unpacked<GetPostsQuery['getPosts']['data']>) {
   const { user: me } = useUser();
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclose();
+  const [selectedImage, setSelectedImage] = useState<number>();
 
   const onSubscriptionData = (data: OnSubscriptionDataOptions<LikesSubscription>) => {
     const subscriptionData = data.subscriptionData.data?.likesPost;
@@ -150,6 +154,11 @@ export function Post({ body, user, id, likes, liked, uploads }: Unpacked<GetPost
       });
   };
 
+  const onImageClick = (idx: number) => {
+    setSelectedImage(idx);
+    onOpen();
+  };
+
   return (
     <Box p={4} pb={2}>
       <HStack space={2}>
@@ -166,14 +175,16 @@ export function Post({ body, user, id, likes, liked, uploads }: Unpacked<GetPost
           </Flex>
           {uploads.length > 0 ?
             <HStack space={4} flexWrap="wrap" mt={3}>
-              {uploads.map((upload) => (
-                <Image
-                  key={`${id}-${upload.id}`}
-                  alt={`${id}-${upload.id}`}
-                  source={{ uri: upload.url }}
-                  rounded="xl"
-                  size="md"
-                />
+              {uploads.map((upload, idx) => (
+                <Pressable key={`${id}-${upload.id}`} onPress={() => onImageClick(idx)}>
+                  <Image
+                    key={`${id}-${upload.id}`}
+                    alt={`${id}-${upload.id}`}
+                    source={{ uri: upload.url }}
+                    rounded="xl"
+                    size="md"
+                  />
+                </Pressable>
               ))}
             </HStack>
             : null}
@@ -204,6 +215,7 @@ export function Post({ body, user, id, likes, liked, uploads }: Unpacked<GetPost
           </Box>
         }
       </HStack>
+      <PhotoDialog isOpen={isOpen} onClose={onClose} source={selectedImage !== undefined ? { uri: uploads[selectedImage].url } : undefined } />
     </Box>
   );
 }

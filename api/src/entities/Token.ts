@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, LoadStrategy, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { Field, ObjectType } from "type-graphql";
 import { v4 } from "uuid";
 import { User } from "./User";
@@ -24,6 +24,7 @@ export class Token {
   updated: Date = new Date();
 
   @Field(() => User)
-  @ManyToOne(() => User, { onDelete: 'cascade' })
+  // LoadStrategy is broken here, update Mikro-ORM to fix at some point 
+  @ManyToOne(() => User, { onDelete: 'cascade', strategy: LoadStrategy.JOINED })
   user!: User;
 }
