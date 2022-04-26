@@ -91,6 +91,18 @@ async function startApolloServer() {
 
   const orm = await MikroORM.init(config);
 
+  const generator = orm.getSchemaGenerator();
+
+  try {
+     await generator.createSchema();
+  } catch (error) {
+    console.log("Database scheme is already set up");
+  }
+
+  if (!await generator.ensureDatabase()) {
+    await generator.updateSchema();
+  }
+
   const options: Redis.RedisOptions = {
     host: REDIS_HOST,
     password: REDIS_PASSWORD,
