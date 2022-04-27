@@ -16,37 +16,7 @@ import { RedisPubSub } from "graphql-redis-subscriptions";
 import { WebSocketServer } from "ws";
 import { graphqlUploadExpress } from "graphql-upload";
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { Context as WSContext, SubscribeMessage } from "graphql-ws";
 import { REDIS_HOST, REDIS_PASSWORD } from "./utils/constants";
-
-async function onSubscribe(
-  { connectionParams }: WSContext<Record<string, unknown> | undefined>,
-  msg: SubscribeMessage,
-  schema: GraphQLSchema,
-  orm: MikroORM<IDatabaseDriver<Connection>>
-) {
-  const bearer = connectionParams?.token as string | undefined;
-
-  if (!bearer) {
-    return;
-  }
-
-  const token = await orm.em.fork().findOne(
-    Token,
-    bearer,
-    {
-      populate: ['user'],
-    }
-  );
-
-  return {
-    contextValue: { user: token?.user, token },
-    schema,
-    document: parse(msg.payload.query),
-    variableValues: msg.payload.variables
-  }
-}
-
 
 export function errorFormatter(error: GraphQLError) {
   if (error?.message === "Argument Validation Error") {
@@ -125,24 +95,7 @@ async function startApolloServer() {
     path: '/subscriptions',
   });
 
-  const serverCleanup = useServer({
-    schema,
-    onConnect: async (data) => {
-      const auth = data.connectionParams?.token as string | undefined;
-      const context = { em: orm.em.fork() };
-
-      if (!auth) return context;
-
-      const token = await orm.em.fork().findOne(Token, auth, { populate: ['user'] });
-
-      if (token) {
-        return {
-          contextValue: { user: token.user, token },
-          schema,
-        }
-      }
-    },
-  }, wsServer);
+  const serverCleanup = useServer({ schema }, wsServer);
 
   const server = new ApolloServer({
     schema,
