@@ -11,7 +11,7 @@ import { ApolloServer, ExpressContext } from 'apollo-server-express';
 import { ApolloError, ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { authChecker } from "./utils/auth";
 import { ValidationError } from 'class-validator';
-import { GraphQLError, GraphQLSchema, parse } from 'graphql';
+import { GraphQLError } from 'graphql';
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { WebSocketServer } from "ws";
 import { graphqlUploadExpress } from "graphql-upload";
