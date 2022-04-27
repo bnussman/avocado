@@ -13,6 +13,7 @@ import {
   useToast,
   Box,
   MenuDivider,
+  useBreakpointValue,
 } from '@chakra-ui/react'
 import { CloseIcon, LockIcon } from '@chakra-ui/icons';
 
@@ -26,6 +27,7 @@ export function UserMenu() {
   const { user } = useUser();
   const toast = useToast();
   const [logout] = useMutation<LogoutMutation>(Logout);
+  const isSmall = useBreakpointValue({ base: true, md: false });
 
   const onLogout = async () => {
     const { data, errors } = await logout();
@@ -53,7 +55,7 @@ export function UserMenu() {
   return (
     <Menu>
       <MenuButton as={Button} leftIcon={<Avatar size="xs" src={user.picture} />}>
-        {user.name}
+        {isSmall ? user.first : user.name}
       </MenuButton>
       <MenuList>
         <MenuItem icon={<LockIcon />} as={Link} to="/sessions">Sessions</MenuItem>

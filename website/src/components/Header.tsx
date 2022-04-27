@@ -19,6 +19,7 @@ import {
   useBreakpointValue,
   IconButton,
 } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
 export function Header() {
   const { user } = useUser();
@@ -44,7 +45,7 @@ export function Header() {
     onOpen: onLoginOpen
   } = useDisclosure();
 
-  const Icon = () => (
+  const Icon = useMemo(() => (
     <Flex
       backgroundColor='white'
       alignItems='center'
@@ -56,7 +57,7 @@ export function Header() {
     >
       <Image h={8} src={Logo} />
     </Flex>
-  );
+  ), []);
 
   return (
     <>
@@ -64,7 +65,7 @@ export function Header() {
         <HStack spacing={4} alignItems='center'>
           <Box>
             <Flex alignItems='center' as={Link} to="/">
-              <Icon />
+              {Icon}
             </Flex>
           </Box>
           <HStack
@@ -85,14 +86,16 @@ export function Header() {
             spacing={4}
             alignItems='center'
           >
-            {isMobile ? 
-              <IconButton
-                aria-label="New Post"
-                colorScheme="purple"
-                isDisabled={!user}
-                icon={<AddIcon />}
-                onClick={onPostOpen}
-              />
+            {isMobile ?
+              user ?
+                <IconButton
+                  aria-label="New Post"
+                  colorScheme="purple"
+                  isDisabled={!user}
+                  icon={<AddIcon />}
+                  onClick={onPostOpen}
+                />
+                : null
               :
               <Button
                 isDisabled={!user}
