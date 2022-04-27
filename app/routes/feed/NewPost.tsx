@@ -73,7 +73,7 @@ export function NewPost(props: any) {
     post({
       variables: {
         body: text,
-        pictures: [picture]
+        pictures: picture ? [picture] : []
       }
     })
       .then(() => {
