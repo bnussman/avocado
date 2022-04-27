@@ -5,19 +5,17 @@ import {
   Image,
   Modal,
   Spinner,
-  useColorMode
 } from "native-base";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  source: ImageURISource;
+  source: ImageURISource | undefined;
 }
 
 export function PhotoDialog(props: Props) {
   const { isOpen, onClose, source } = props;
   const [isLoading, setIsLoading] = useState(true);
-  const { colorMode } = useColorMode();
 
   const onLoad = () => {
     setIsLoading(false);

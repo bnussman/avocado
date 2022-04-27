@@ -24,8 +24,10 @@ import {
   Button,
   Image,
   useDisclosure,
+  Icon,
 } from '@chakra-ui/react';
 import { useState } from 'react';
+import { HeartIcon } from '../../icons/Heart';
 
 const Delete = gql`
   mutation DeletePost($id: String!) {
@@ -141,7 +143,7 @@ export function Post({ body, user, id, likes: intialLikes, liked, uploads }: Unp
               colorScheme={liked ? "red" : "gray"}
               isLoading={likeLoading}
               isDisabled={!Boolean(me)}
-              leftIcon={<StarIcon />}
+              leftIcon={<Icon as={HeartIcon} />}
               onClick={onLike}
             >
               {likes}
