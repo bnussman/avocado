@@ -1,20 +1,14 @@
-import { NewPostModal } from '../../components/NewPostModal';
 import { Loading } from '../../components/Loading';
 import { Error } from '../../components/Error';
-import { AddIcon } from '@chakra-ui/icons';
 import { gql, useQuery } from '@apollo/client';
 import { GetPostsQuery } from '../../generated/graphql';
 import { Post } from './Post';
 import { useEffect } from 'react';
 import { MAX_PAGE_SIZE } from '../../utils/constants';
 import { Waypoint } from 'react-waypoint';
-import { useUser } from '../../utils/useUser';
 import { client } from '../../utils/apollo';
 import {
-  Flex,
-  Button,
   Box,
-  useDisclosure,
   Stack,
   Center,
   Text
