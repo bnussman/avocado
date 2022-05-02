@@ -24,9 +24,11 @@ for (const key of keys) {
   content += `\n  ${key}: "${String(secrets[key])}"`
 }
 
-console.log(content);
+const newlines = content.replace(/\n/, "\\n");
 
-fs.appendFile(`${__dirname}/templates/configmap.yaml`, content, err => {
+console.log(newlines);
+
+fs.appendFile(`${__dirname}/templates/configmap.yaml`, newlines, err => {
   if (err) {
     console.error(err)
     return
