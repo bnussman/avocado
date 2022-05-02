@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: production
-      url: https://api.avocado.community
+      url: https://avocado.community
     steps:
       - name: Create kube config
         run: |
