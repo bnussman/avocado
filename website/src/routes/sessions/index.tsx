@@ -28,7 +28,7 @@ export function Sessions() {
 
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  async function fetchBeeps(page: number) {
+  async function fetchTokens(page: number) {
     refetch({ offset: page })
   }
 
@@ -43,7 +43,7 @@ export function Sessions() {
           resultCount={count}
           currentPage={currentPage}
           setCurrentPage={setCurrentPage}
-          onPageChange={fetchBeeps}
+          onPageChange={fetchTokens}
         />
       </Flex>
       <Box overflowX="auto">
